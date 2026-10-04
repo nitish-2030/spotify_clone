@@ -1,0 +1,113 @@
+.main {
+  --card-w: clamp(178px, calc(178px + (100vw - 1000px) * 0.0265), 200px);
+  --card-pad: 12px;
+  background: linear-gradient(to bottom, #1b3336 0, var(--bg-panel) 280px);
+  border-radius: 8px;
+  padding: 16px 24px 24px;
+  overflow-y: auto;
+}
+
+.main__chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.main__chip {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 500px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.main__chip:hover {
+  background: var(--bg-hover);
+}
+
+.main__chip--active {
+  background: var(--text-primary);
+  color: #000;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.section__head h2 {
+  min-width: 0;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section__all {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.section__all:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.section__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--card-w));
+  justify-content: start;
+  grid-template-rows: auto;
+  grid-auto-rows: 0;
+  overflow: hidden;
+  margin: 0 calc(var(--card-pad) * -1);
+}
+
+.section__row--all {
+  grid-auto-rows: auto;
+}
+
+.main__empty {
+  margin: 48px 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  text-align: center;
+}
+
+/* card size follows the screen width, not the main panel width */
+@media (max-width: 1000px) {
+  .main {
+    --card-w: clamp(112px, calc(111px + (100vw - 500px) * 0.134), 178px);
+  }
+}
+
+@media (max-width: 700px) {
+  .main {
+    --card-pad: 8px;
+    padding: 16px 16px 24px;
+  }
+
+  .section__head h2 {
+    font-size: 20px;
+  }
+}

@@ -1,0 +1,320 @@
+.topbar {
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px 0 24px;
+  background: var(--bg-base);
+}
+
+/* ---------- left ---------- */
+.topbar__left {
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.topbar__logo {
+  color: var(--text-primary);
+  display: inline-flex;
+}
+
+/* ---------- center ---------- */
+.topbar__center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 530px;
+  min-width: 0;
+}
+
+.topbar__home {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.topbar__home:hover {
+  background: var(--bg-hover);
+  transform: scale(1.04);
+}
+
+.topbar__home--active,
+.topbar__browse--active {
+  color: var(--text-primary);
+}
+
+.topbar__search {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar__search input {
+  width: 100%;
+  height: 48px;
+  padding: 0 52px 0 48px;
+  border: 2px solid transparent;
+  border-radius: 500px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+}
+
+.topbar__search input::placeholder {
+  color: var(--text-secondary);
+}
+
+.topbar__search:hover input {
+  background: var(--bg-hover);
+}
+
+.topbar__search input:focus {
+  border-color: var(--text-primary);
+}
+
+.topbar__search-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+.topbar__browse {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  border: none;
+  border-left: 1px solid #7c7c7c;
+  padding-left: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.topbar__browse:hover {
+  color: var(--text-primary);
+}
+
+/* ---------- right ---------- */
+.topbar__right {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.topbar__links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar__links a {
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.topbar__links a:hover {
+  color: var(--text-primary);
+}
+
+.topbar__links a.topbar__extra {
+  font-size: 16px;
+}
+
+.topbar__links a.topbar__install {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 4px 16px 4px 36px;
+  font-size: 13px;
+}
+
+.topbar__install svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.topbar__divider {
+  width: 1px;
+  height: 24px;
+  margin: 0 12px 0 16px;
+  background: var(--text-primary);
+}
+
+.topbar__signup,
+.topbar__login {
+  border: none;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.topbar__signup {
+  padding: 12px 16px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.topbar__signup:hover {
+  color: var(--text-primary);
+}
+
+.topbar__login {
+  padding: 12px 32px;
+  border-radius: 500px;
+  background: var(--text-primary);
+  color: #000;
+}
+
+.topbar__login:hover {
+  transform: scale(1.04);
+}
+
+/* ---------- menu button (hidden on wide screens) ---------- */
+.topbar__menu {
+  display: none;
+  place-items: center;
+  width: 20px;
+  height: 32px;
+  margin-left: 8px;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.topbar__menu:hover {
+  color: var(--text-primary);
+}
+
+/* ---------- responsive ---------- */
+
+/* very wide: center the home + search */
+@media (min-width: 1723px) {
+  .topbar__left {
+    flex: 1;
+    margin-right: 0;
+  }
+
+  .topbar__right {
+    flex: 1;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}
+
+/* search collapses to an icon, expands on click */
+@media (max-width: 1068px) {
+  .topbar__search {
+    flex: none;
+    width: 48px;
+    overflow: hidden;
+    border-radius: 500px;
+    transition: width 0.3s ease;
+  }
+
+  .topbar__search--open {
+    width: calc(100% - 56px);
+  }
+
+  .topbar__search-icon {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .topbar__browse {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .topbar__search--open .topbar__browse {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* links hide, hamburger shows */
+@media (max-width: 849px) {
+  .topbar__extra {
+    display: none;
+  }
+
+  .topbar__menu {
+    display: grid;
+  }
+}
+
+/* compact mobile layout */
+@media (max-width: 600px) {
+  .topbar {
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .topbar__left {
+    margin-right: 8px;
+  }
+
+  .topbar__logo svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .topbar__center {
+    gap: 4px;
+  }
+
+  .topbar__links a.topbar__install {
+    padding: 4px 8px 4px 26px;
+    font-size: 12px;
+  }
+
+  .topbar__install svg {
+    left: 8px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .topbar__signup {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .topbar__login {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .topbar__menu {
+    margin-left: 0;
+  }
+}

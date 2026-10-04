@@ -1,0 +1,34 @@
+.app {
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: clamp(280px, 23vw, 420px) minmax(0, 1fr) 32px;
+  grid-template-rows: var(--topbar-height) minmax(0, 1fr) 72px;
+  grid-template-areas:
+    "topbar  topbar  topbar"
+    "sidebar main    nowplaying"
+    "player  player  player";
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+
+.app--np-open {
+  grid-template-columns:
+    clamp(280px, 23vw, 420px) minmax(0, 1fr) clamp(180px, 28vw, 420px);
+}
+
+.app > .topbar { grid-area: topbar; margin: 0 -8px; }
+.app > .sidebar { grid-area: sidebar; }
+.app > .main { grid-area: main; }
+.app > .nowplaying { grid-area: nowplaying; }
+.app > .player { grid-area: player; }
+
+/* small screens: sidebar becomes a narrow icon rail (never hidden) */
+@media (max-width: 700px) {
+  .app {
+    grid-template-columns: 72px minmax(0, 1fr) 32px;
+  }
+
+  .app--np-open {
+    grid-template-columns: 72px minmax(0, 1fr) clamp(180px, 28vw, 420px);
+  }
+}

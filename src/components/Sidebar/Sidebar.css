@@ -1,0 +1,105 @@
+.sidebar {
+  background: var(--bg-panel);
+  border-radius: 8px;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px 16px;
+}
+
+.sidebar__header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sidebar__create {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 500px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sidebar__create:hover {
+  background: var(--bg-hover);
+}
+
+.sidebar__card {
+  margin-bottom: 16px;
+  padding: 20px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+}
+
+.sidebar__card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sidebar__card p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar__card button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 500px;
+  background: var(--text-primary);
+  color: #000;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sidebar__card button:hover {
+  transform: scale(1.04);
+}
+
+.sidebar__lib-icon {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .sidebar {
+    padding: 8px 0;
+  }
+
+  .sidebar__header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  .sidebar__header h2,
+  .sidebar__create-label,
+  .sidebar__card {
+    display: none;
+  }
+
+  .sidebar__lib-icon {
+    display: block;
+    color: var(--text-secondary);
+  }
+
+  .sidebar__create {
+    padding: 8px;
+    border-radius: 50%;
+  }
+}

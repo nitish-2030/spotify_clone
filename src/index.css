@@ -1,0 +1,22 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-base: #000;
+  --bg-elevated: #1f1f1f;
+  --bg-hover: #2a2a2a;
+  --text-primary: #fff;
+  --text-secondary: #b3b3b3;
+  --topbar-height: 64px;
+  --bg-panel: #121212;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: "Figtree", system-ui, sans-serif;
+}
