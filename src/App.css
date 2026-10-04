@@ -1,7 +1,10 @@
 .app {
+  /* sidebar ki width ek jagah define: Player ka left column bhi isi ko follow karega */
+  --sidebar-w: clamp(280px, 23vw, 420px);
+
   height: 100dvh;
   display: grid;
-  grid-template-columns: clamp(280px, 23vw, 420px) minmax(0, 1fr) 32px;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr) 32px;
   grid-template-rows: var(--topbar-height) minmax(0, 1fr) 72px;
   grid-template-areas:
     "topbar  topbar  topbar"
@@ -13,7 +16,7 @@
 
 .app--np-open {
   grid-template-columns:
-    clamp(280px, 23vw, 420px) minmax(0, 1fr) clamp(180px, 28vw, 420px);
+    var(--sidebar-w) minmax(0, 1fr) clamp(180px, 28vw, 420px);
 }
 
 .app > .topbar { grid-area: topbar; margin: 0 -8px; }
@@ -25,10 +28,6 @@
 /* small screens: sidebar becomes a narrow icon rail (never hidden) */
 @media (max-width: 700px) {
   .app {
-    grid-template-columns: 72px minmax(0, 1fr) 32px;
-  }
-
-  .app--np-open {
-    grid-template-columns: 72px minmax(0, 1fr) clamp(180px, 28vw, 420px);
+    --sidebar-w: 72px;
   }
 }

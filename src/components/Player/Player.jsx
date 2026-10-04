@@ -3,17 +3,20 @@ import { FaPlay, FaPause, FaStepBackward, FaStepForward } from "react-icons/fa";
 import {
   FiVolume2,
   FiVolumeX,
-  FiMic,
+ 
   FiMaximize,
   FiShuffle,
   FiRepeat,
   FiPlusCircle,
 } from "react-icons/fi";
+import { TbMicrophone2 } from "react-icons/tb";
+
 import {
-  MdOutlineQueueMusic,
+  
   MdOutlineDevices,
   MdOutlinePictureInPictureAlt,
 } from "react-icons/md";
+import { HiOutlineQueueList } from "react-icons/hi2";
 import "./Player.css";
 
 function formatTime(seconds) {
@@ -147,10 +150,10 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
 
       <div className="player__right">
         <button className="player__icon-btn player__extra" aria-label="Lyrics">
-          <FiMic size={16} />
+          <TbMicrophone2 size={16}/>
         </button>
         <button className="player__icon-btn player__extra" aria-label="Queue">
-          <MdOutlineQueueMusic size={20} />
+          <HiOutlineQueueList size={20}/>
         </button>
         <button className="player__icon-btn player__extra" aria-label="Connect to a device">
           <MdOutlineDevices size={20} />

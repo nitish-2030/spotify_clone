@@ -1,15 +1,15 @@
 .topbar {
+  position: relative;
   height: var(--topbar-height);
   display: flex;
   align-items: center;
-  gap: 8px;
   padding: 0 12px 0 24px;
   background: var(--bg-base);
 }
 
 /* ---------- left ---------- */
 .topbar__left {
-  margin-right: 20px;
+  margin-right: 28px;
   flex-shrink: 0;
 }
 
@@ -89,8 +89,6 @@
   height: 48px;
   display: grid;
   place-items: center;
-  border: none;
-  background: transparent;
   color: var(--text-secondary);
   pointer-events: none;
 }
@@ -114,7 +112,7 @@
   color: var(--text-primary);
 }
 
-/* ---------- right ---------- */
+/* ---------- right (logged-in) ---------- */
 .topbar__right {
   display: flex;
   align-items: center;
@@ -123,198 +121,105 @@
   white-space: nowrap;
 }
 
-.topbar__links {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.topbar__links a {
-  color: var(--text-secondary);
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.topbar__links a:hover {
-  color: var(--text-primary);
-}
-
-.topbar__links a.topbar__extra {
-  font-size: 16px;
-}
-
-.topbar__links a.topbar__install {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
+.topbar__premium {
   height: 32px;
-  padding: 4px 16px 4px 36px;
-  font-size: 13px;
-}
-
-.topbar__install svg {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.topbar__divider {
-  width: 1px;
-  height: 24px;
-  margin: 0 12px 0 16px;
-  background: var(--text-primary);
-}
-
-.topbar__signup,
-.topbar__login {
+  margin-right: 5px;
+  padding: 0 16px;
   border: none;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.topbar__signup {
-  padding: 12px 16px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.topbar__signup:hover {
-  color: var(--text-primary);
-}
-
-.topbar__login {
-  padding: 12px 32px;
   border-radius: 500px;
   background: var(--text-primary);
   color: #000;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.topbar__login:hover {
+.topbar__premium:hover {
   transform: scale(1.04);
 }
 
-/* ---------- menu button (hidden on wide screens) ---------- */
-.topbar__menu {
-  display: none;
-  place-items: center;
-  width: 20px;
+.topbar__install {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   height: 32px;
-  margin-left: 8px;
-  padding: 2px;
+  margin-right: 16px;
+  padding: 0 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.topbar__install:hover {
+  color: var(--text-primary);
+}
+
+.topbar__icon-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  padding: 0;
   border: none;
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
 }
 
-.topbar__menu:hover {
+.topbar__icon-btn:hover {
   color: var(--text-primary);
 }
 
-/* ---------- responsive ---------- */
-
-/* very wide: center the home + search */
-@media (min-width: 1723px) {
-  .topbar__left {
-    flex: 1;
-    margin-right: 0;
-  }
-
-  .topbar__right {
-    flex: 1;
-    margin-left: 0;
-    justify-content: flex-end;
-  }
+.topbar__avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  cursor: pointer;
 }
 
-/* search collapses to an icon, expands on click */
-@media (max-width: 1068px) {
-  .topbar__search {
-    flex: none;
-    width: 48px;
-    overflow: hidden;
-    border-radius: 500px;
-    transition: width 0.3s ease;
-  }
-
-  .topbar__search--open {
-    width: calc(100% - 56px);
-  }
-
-  .topbar__search-icon {
-    pointer-events: auto;
-    cursor: pointer;
-  }
-
-  .topbar__browse {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-  }
-
-  .topbar__search--open .topbar__browse {
-    opacity: 1;
-    pointer-events: auto;
-  }
+.topbar__avatar:hover {
+  background: var(--bg-hover);
+  transform: scale(1.04);
 }
 
-/* links hide, hamburger shows */
-@media (max-width: 849px) {
-  .topbar__extra {
-    display: none;
-  }
-
-  .topbar__menu {
-    display: grid;
-  }
+.topbar__avatar span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1ed760;
+  color: #000;
+  font-size: 14px;
+  font-weight: 700;
 }
 
-/* compact mobile layout */
-@media (max-width: 600px) {
-  .topbar {
-    padding: 0 8px;
-    gap: 4px;
-  }
+/* ---------- responsive: sirf 2 breakpoints (real Spotify se napey) ---------- */
 
-  .topbar__left {
-    margin-right: 8px;
-  }
-
-  .topbar__logo svg {
-    width: 28px;
-    height: 28px;
-  }
-
+/* 1397px aur upar: home + search bilkul screen ke beech mein */
+@media (min-width: 1397px) {
   .topbar__center {
-    gap: 4px;
+    position: absolute;
+    left: 50%;
+    width: 530px;
+    transform: translateX(-50%);
   }
+}
 
-  .topbar__links a.topbar__install {
-    padding: 4px 8px 4px 26px;
-    font-size: 12px;
-  }
-
-  .topbar__install svg {
-    left: 8px;
-    width: 14px;
-    height: 14px;
-  }
-
-  .topbar__signup {
-    padding: 8px;
-    font-size: 12px;
-  }
-
-  .topbar__login {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-
-  .topbar__menu {
-    margin-left: 0;
+/* 1023px aur neeche: "Explore Premium" chhup jaata hai */
+@media (max-width: 1023px) {
+  .topbar__premium {
+    display: none;
   }
 }

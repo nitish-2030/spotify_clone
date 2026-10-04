@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { FaSpotify } from "react-icons/fa";
 import {
   MdInventory2,
@@ -6,18 +6,11 @@ import {
   MdOutlineDownloadForOffline,
 } from "react-icons/md";
 import { GoHome, GoHomeFill } from "react-icons/go";
-import { FiSearch, FiMenu } from "react-icons/fi";
+import { FiSearch, FiBell, FiUsers } from "react-icons/fi";
 import "./TopBar.css";
 
 function TopBar({ query, onQueryChange }) {
-  const [searchOpen, setSearchOpen] = useState(false);
   const [activePage, setActivePage] = useState("home");
-  const inputRef = useRef(null);
-
-  function openSearch() {
-    setSearchOpen(true);
-    inputRef.current.focus();
-  }
 
   return (
     <header className="topbar">
@@ -36,24 +29,16 @@ function TopBar({ query, onQueryChange }) {
           {activePage === "home" ? <GoHomeFill size={26} /> : <GoHome size={26} />}
         </button>
 
-        <div
-          className={`topbar__search ${searchOpen ? "topbar__search--open" : ""}`}
-        >
-          <button
-            className="topbar__search-icon"
-            aria-label="Search"
-            onClick={openSearch}
-          >
+        <div className="topbar__search">
+          <span className="topbar__search-icon">
             <FiSearch size={22} />
-          </button>
+          </span>
           <input
-            ref={inputRef}
             type="text"
             placeholder="What do you want to play?"
             aria-label="Search"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            onBlur={() => setSearchOpen(false)}
           />
           <button
             className={`topbar__browse ${activePage === "browse" ? "topbar__browse--active" : ""}`}
@@ -70,20 +55,19 @@ function TopBar({ query, onQueryChange }) {
       </div>
 
       <nav className="topbar__right">
-        <div className="topbar__links">
-          <a href="#" className="topbar__extra">Premium</a>
-          <a href="#" className="topbar__extra">Support</a>
-          <a href="#" className="topbar__extra">Download</a>
-          <span className="topbar__divider topbar__extra" />
-          <a href="#" className="topbar__install">
-            <MdOutlineDownloadForOffline size={16} />
-            Install App
-          </a>
-        </div>
-        <button className="topbar__signup">Sign up</button>
-        <button className="topbar__login">Log in</button>
-        <button className="topbar__menu" aria-label="Menu">
-          <FiMenu size={16} />
+        <button className="topbar__premium">Explore Premium</button>
+        <button className="topbar__install">
+          <MdOutlineDownloadForOffline size={16} />
+          Install App
+        </button>
+        <button className="topbar__icon-btn" aria-label="What's New">
+          <FiBell size={16} />
+        </button>
+        <button className="topbar__icon-btn" aria-label="Friend Activity">
+          <FiUsers size={18} />
+        </button>
+        <button className="topbar__avatar" aria-label="Profile">
+          <span>D</span>
         </button>
       </nav>
     </header>

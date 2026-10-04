@@ -1,6 +1,7 @@
 .player {
   display: grid;
-  grid-template-columns: minmax(0, 30%) minmax(0, 1fr) 295px;
+  /* real Spotify: left 30% / center 40% / right 30% (player ki poori width ka) */
+  grid-template-columns: 30% 40% 30%;
   align-items: center;
   padding: 0;
   overflow: hidden;
@@ -13,6 +14,7 @@
   align-items: center;
   gap: 16px;
   min-width: 0;
+  margin-right: 8px; /* real mein left box right se 8px chhota hai (287 vs 295 @1000px) */
   padding-left: 8px;
 }
 
@@ -58,7 +60,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -81,6 +83,7 @@
 }
 
 .player__btn {
+  position: relative;
   display: grid;
   place-items: center;
   width: 32px;
@@ -101,8 +104,22 @@
   cursor: default;
 }
 
-.player__btn--on {
+.player__btn--on,
+.player__btn--on:hover:not(:disabled) {
   color: #1ed760;
+}
+
+/* shuffle / repeat ON hone par neeche chhota green dot (real Spotify jaisa) */
+.player__btn--on::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #1ed760;
+  transform: translateX(-50%);
 }
 
 .player__play {
@@ -127,15 +144,25 @@
 }
 
 .player__time {
-  min-width: 36px;
-  text-align: center;
+  flex-shrink: 0;
+  width: 50px; /* real: 50px box, bar se 8px gap */
 }
 
-/* ---------- right (fixed 295px) ---------- */
+.player__time:first-child {
+  text-align: right;
+}
+
+.player__time:last-child {
+  text-align: left;
+}
+
+/* ---------- right (30% column, icons right side chipke) ---------- */
 .player__right {
   display: flex;
   align-items: center;
-  width: 295px;
+  justify-content: flex-end;
+  width: 100%;
+  min-width: 0;
 }
 
 .player__icon-btn {
@@ -155,8 +182,8 @@
   color: var(--text-primary);
 }
 
-.player__volume {
-  flex: 1 1 0;
+.player__range.player__volume {
+  flex: 0 1 93px; /* real: 93px, jagah kam ho to shrink */
   min-width: 0;
   margin: 0 4px;
 }
@@ -164,6 +191,7 @@
 /* ---------- range sliders (progress + volume) ---------- */
 .player__range {
   flex: 1;
+  min-width: 0; /* range ki default ~129px width ko shrink hone do, warna center overlap karta hai */
   height: 4px;
   border-radius: 2px;
   background: linear-gradient(
@@ -223,6 +251,7 @@
 
   .player__left {
     gap: 8px;
+    margin-right: 0;
   }
 
   .player__cover {
@@ -255,7 +284,11 @@
   }
 
   .player__time {
-    min-width: 26px;
+    width: 26px;
+  }
+
+  .player__btn--on::after {
+    bottom: 0;
   }
 
   .player__right {
@@ -272,7 +305,7 @@
     height: 16px;
   }
 
-  .player__volume {
+  .player__range.player__volume {
     margin: 0 2px;
   }
 }
