@@ -1,24 +1,37 @@
 import { useState } from "react";
+import { FaSpotify } from "react-icons/fa";
 import Card from "../Card/Card";
 import "./MainContent.css";
 
 const chips = ["All", "Music", "Podcasts"];
 
-function Section({ title, wrap, children }) {
+function Section({ title, caption, wrap, tall, children }) {
   return (
     <section className="section">
+      {caption && <p className="section__caption">{caption}</p>}
       <div className="section__head">
         <h2>{title}</h2>
         {!wrap && <button className="section__all">Show all</button>}
       </div>
-      <div className={`section__row ${wrap ? "section__row--all" : ""}`}>
+      <div
+        className={`section__row ${wrap ? "section__row--all" : ""} ${tall ? "section__row--tall" : ""}`}
+      >
         {children}
       </div>
     </section>
   );
 }
 
-function MainContent({ songs, playlists, currentSong, isPlaying, onPlay, query }) {
+function MainContent({
+  songs,
+  playlists,
+  artists,
+  radios,
+  currentSong,
+  isPlaying,
+  onPlay,
+  query,
+}) {
   const [activeChip, setActiveChip] = useState("All");
 
   const q = query.trim().toLowerCase();
@@ -65,11 +78,19 @@ function MainContent({ songs, playlists, currentSong, isPlaying, onPlay, query }
         )
       ) : (
         <>
-          <Section title="Popular albums and singles">
+          <Section
+            title="Recommended for today"
+            caption="Inspired by your recent activity"
+            tall
+          >
             {songs.map(renderSongCard)}
           </Section>
 
-          <Section title="Editor's Picks: No-Skip Playlists">
+          <Section
+            title="Based on your recent listening"
+            caption="Inspired by your recent activity"
+            tall
+          >
             {playlists.map((playlist) => (
               <Card
                 key={playlist.id}
@@ -81,6 +102,50 @@ function MainContent({ songs, playlists, currentSong, isPlaying, onPlay, query }
                 onPlay={() => onPlay(playlist.song)}
               />
             ))}
+          </Section>
+
+          <Section title="Suggested artists" caption="Inspired by your recent activity">
+            {artists.map((artist) => (
+              <Card
+                key={artist.id}
+                round
+                title={artist.name}
+                subtitle="Artist"
+                cover={artist.song.cover}
+                isActive={currentSong?.id === artist.song.id}
+                isPlaying={isPlaying}
+                onPlay={() => onPlay(artist.song)}
+              />
+            ))}
+          </Section>
+
+          <Section title="Popular radio">
+            {radios.map((radio) => (
+              <Card
+                key={radio.id}
+                coverClass="radio"
+                subtitle={radio.note}
+                cover={radio.color}
+                isActive={currentSong?.id === radio.song.id}
+                isPlaying={isPlaying}
+                onPlay={() => onPlay(radio.song)}
+              >
+                <div className="radio__top">
+                  <FaSpotify size={14} />
+                  <span>RADIO</span>
+                </div>
+                <div className="radio__faces" style={{ "--radio-bg": radio.color }}>
+                  <i style={{ background: radio.faces[0] }} />
+                  <i style={{ background: radio.faces[2] }} />
+                  <i style={{ background: radio.faces[1] }} />
+                </div>
+                <p className="radio__name">{radio.name}</p>
+              </Card>
+            ))}
+          </Section>
+
+          <Section title="Popular albums and singles" tall>
+            {[...songs].reverse().map(renderSongCard)}
           </Section>
         </>
       )}

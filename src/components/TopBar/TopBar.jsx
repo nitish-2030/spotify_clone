@@ -67,7 +67,7 @@ function TopBar({ query, onQueryChange }) {
           <FiUsers size={18} />
         </button>
         <button className="topbar__avatar" aria-label="Profile">
-          <span>D</span>
+          <span>N</span>
         </button>
       </nav>
     </header>

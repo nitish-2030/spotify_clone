@@ -4,7 +4,7 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import MainContent from "./components/MainContent/MainContent";
 import Player from "./components/Player/Player";
 import NowPlaying from "./components/NowPlaying/NowPlaying";
-import { songs, playlists } from "./data/songs";
+import { songs, playlists, artists, radios } from "./data/songs";
 import "./App.css";
 
 // 1008px aur upar: library khuli hoti hai, usse neeche: rail (real Spotify se napa)
@@ -85,6 +85,8 @@ function App() {
       <MainContent
         songs={songs}
         playlists={playlists}
+        artists={artists}
+        radios={radios}
         currentSong={currentSong}
         isPlaying={isPlaying}
         onPlay={handlePlay}

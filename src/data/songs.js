@@ -21,3 +21,25 @@ export const playlists = [
   { id: "p7", title: "Lo-fi Study", description: "Beats to keep you in the zone.", song: songs[6] },
   { id: "p8", title: "Feel Good Friday", description: "Upbeat tracks to kick off the weekend.", song: songs[4] },
 ];
+
+// "Suggested artists" row (gol covers)
+export const artists = songs.map((song) => ({
+  id: `a${song.id}`,
+  name: song.artist,
+  song,
+}));
+
+// "Popular radio" row (rang-birangi cards, 3 gol faces)
+const radioColors = ["#ffd978", "#8fead8", "#ffa575", "#ff9fb3", "#b9a8ff", "#9ad8ff"];
+export const radios = songs.slice(0, 6).map((song, i) => ({
+  id: `r${song.id}`,
+  name: song.artist,
+  color: radioColors[i],
+  note: `With ${songs[(i + 1) % songs.length].artist}, ${songs[(i + 2) % songs.length].artist}, ${songs[(i + 3) % songs.length].artist} and more`,
+  faces: [
+    songs[(i + 1) % songs.length].cover,
+    song.cover,
+    songs[(i + 2) % songs.length].cover,
+  ],
+  song,
+}));
