@@ -39,9 +39,9 @@
   display: block;
 }
 
-.sidebar__title:hover .sidebar__title-icon {
-  /* color: var(--text-primary); */
-}
+/* .sidebar__title:hover .sidebar__title-icon {
+  color: var(--text-primary);
+} */
 
 /* "+" button: khuli me 32px (ESTIMATE), rail me 35px (napa hua) */
 .sidebar__create {
