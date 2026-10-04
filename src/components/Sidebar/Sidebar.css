@@ -5,36 +5,61 @@
   overflow-y: auto;
 }
 
+/* ---------- khuli library (280px) ---------- */
 .sidebar__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 8px 16px;
+  height: 48px;
+  margin-bottom: 34px; /* ESTIMATE: pehle card ka top panel se ~90px neeche */
+  padding: 0 8px 0 12px;
 }
 
-.sidebar__header h2 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.sidebar__create {
+.sidebar__title {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 0;
   border: none;
-  border-radius: 500px;
-  background: var(--bg-elevated);
+  background: transparent;
   color: var(--text-primary);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
+  cursor: pointer;
+}
+
+/* sidebar par mouse aate hi "Your Library" ke saath left-arrow icon aata hai */
+.sidebar__title-icon {
+  display: none;
+  color: var(--text-secondary);
+}
+
+.sidebar:hover .sidebar__title-icon {
+  display: block;
+}
+
+.sidebar__title:hover .sidebar__title-icon {
+  /* color: var(--text-primary); */
+}
+
+/* "+" button: khuli me 32px (ESTIMATE), rail me 35px (napa hua) */
+.sidebar__create {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
 .sidebar__create:hover {
   background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .sidebar__card {
@@ -72,34 +97,51 @@
   transform: scale(1.04);
 }
 
-.sidebar__lib-icon {
+/* ---------- band library / rail (72px) ---------- */
+.sidebar--collapsed {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 72 x 107 ka block: 16 + 40 + 12 + 35 + 4 */
+.sidebar__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0 4px;
+}
+
+.sidebar__open {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* .sidebar__open:hover {
+  color: var(--text-primary);
+} */
+
+.sidebar--collapsed .sidebar__create {
+  width: 35px;
+  height: 35px;
+}
+
+/* "Open library" par mouse aate hi library icon ki jagah right-arrow icon */
+.sidebar__open-hover {
   display: none;
 }
 
-@media (max-width: 700px) {
-  .sidebar {
-    padding: 8px 0;
-  }
+.sidebar__open:hover .sidebar__open-default {
+  display: none;
+}
 
-  .sidebar__header {
-    flex-direction: column;
-    gap: 12px;
-    padding: 12px 0;
-  }
-
-  .sidebar__header h2,
-  .sidebar__create-label,
-  .sidebar__card {
-    display: none;
-  }
-
-  .sidebar__lib-icon {
-    display: block;
-    color: var(--text-secondary);
-  }
-
-  .sidebar__create {
-    padding: 8px;
-    border-radius: 50%;
-  }
+.sidebar__open:hover .sidebar__open-hover {
+  display: block;
 }

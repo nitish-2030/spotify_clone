@@ -1,6 +1,6 @@
 .app {
-  /* sidebar ki width ek jagah define: Player ka left column bhi isi ko follow karega */
-  --sidebar-w: clamp(280px, 23vw, 420px);
+  /* sidebar ki width: khuli = 280px, rail (band) = 72px (real Spotify se napa) */
+  --sidebar-w: 280px;
 
   height: 100dvh;
   display: grid;
@@ -14,6 +14,10 @@
   padding: 0 8px 8px;
 }
 
+.app--lib-collapsed {
+  --sidebar-w: 72px;
+}
+
 .app--np-open {
   grid-template-columns:
     var(--sidebar-w) minmax(0, 1fr) clamp(180px, 28vw, 420px);
@@ -24,10 +28,3 @@
 .app > .main { grid-area: main; }
 .app > .nowplaying { grid-area: nowplaying; }
 .app > .player { grid-area: player; }
-
-/* small screens: sidebar becomes a narrow icon rail (never hidden) */
-@media (max-width: 700px) {
-  .app {
-    --sidebar-w: 72px;
-  }
-}
