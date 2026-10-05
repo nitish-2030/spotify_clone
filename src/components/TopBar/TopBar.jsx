@@ -7,9 +7,10 @@ import {
 } from "react-icons/md";
 import { GoHome, GoHomeFill } from "react-icons/go";
 import { FiSearch, FiBell, FiUsers } from "react-icons/fi";
+import AccountMenu from "../AccountMenu/AccountMenu";
 import "./TopBar.css";
 
-function TopBar({ query, onQueryChange }) {
+function TopBar({ query, onQueryChange, menu }) {
   const [activePage, setActivePage] = useState("home");
 
   return (
@@ -66,9 +67,7 @@ function TopBar({ query, onQueryChange }) {
         <button className="topbar__icon-btn" aria-label="Friend Activity">
           <FiUsers size={18} />
         </button>
-        <button className="topbar__avatar" aria-label="Profile">
-          <span>N</span>
-        </button>
+        <AccountMenu {...menu} />
       </nav>
     </header>
   );

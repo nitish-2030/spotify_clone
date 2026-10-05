@@ -22,37 +22,67 @@ function Section({ title, caption, wrap, tall, children }) {
   );
 }
 
-function MainContent({
-  songs,
-  playlists,
-  artists,
-  radios,
-  currentSong,
-  isPlaying,
-  onPlay,
-  query,
-}) {
+// content = { songs, sections: [{ id, title, caption, tall, items: [card] }] }
+// Spotify, General aur Demo teeno isi shape me aate hain, isliye UI ek hi hai.
+function MainContent({ content, loading, currentSong, isPlaying, onPlay, query }) {
   const [activeChip, setActiveChip] = useState("All");
 
   const q = query.trim().toLowerCase();
+  const songs = content?.songs ?? [];
   const results = q
-    ? songs.filter(
-        (s) =>
-          s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q)
-      )
+    ? songs.filter((s) => s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q))
     : [];
 
-  const renderSongCard = (song) => (
+  const renderCard = (item) => (
     <Card
-      key={song.id}
-      title={song.title}
-      subtitle={song.artist}
-      cover={song.cover}
-      isActive={currentSong?.id === song.id}
+      key={item.id}
+      round={item.round}
+      coverClass={item.radio ? "radio" : ""}
+      title={item.title}
+      subtitle={item.subtitle}
+      cover={item.cover}
+      isActive={currentSong?.id === item.song.id}
       isPlaying={isPlaying}
-      onPlay={() => onPlay(song)}
-    />
+      onPlay={() => onPlay(item.song)}
+    >
+      {item.radio && (
+        <>
+          <div className="radio__top">
+            <FaSpotify size={14} />
+            <span>RADIO</span>
+          </div>
+          <div className="radio__faces" style={{ "--radio-bg": item.radio.color }}>
+            <i style={{ background: item.radio.faces[0] }} />
+            <i style={{ background: item.radio.faces[2] }} />
+            <i style={{ background: item.radio.faces[1] }} />
+          </div>
+          <p className="radio__name">{item.radio.name}</p>
+        </>
+      )}
+    </Card>
   );
+
+  const songItem = (song) => ({ id: `q-${song.id}`, title: song.title, subtitle: song.artist, cover: song.cover, song });
+
+  let body;
+  if (loading || !content) {
+    body = <p className="main__empty">Loading your music…</p>;
+  } else if (q) {
+    body =
+      results.length > 0 ? (
+        <Section title={`Results for "${query.trim()}"`} wrap>
+          {results.map((s) => renderCard(songItem(s)))}
+        </Section>
+      ) : (
+        <p className="main__empty">No results found for "{query.trim()}"</p>
+      );
+  } else {
+    body = content.sections.map((sec) => (
+      <Section key={sec.id} title={sec.title} caption={sec.caption} tall={sec.tall}>
+        {sec.items.map(renderCard)}
+      </Section>
+    ));
+  }
 
   return (
     <main className="main">
@@ -67,88 +97,7 @@ function MainContent({
           </button>
         ))}
       </div>
-
-      {q ? (
-        results.length > 0 ? (
-          <Section title={`Results for "${query.trim()}"`} wrap>
-            {results.map(renderSongCard)}
-          </Section>
-        ) : (
-          <p className="main__empty">No results found for "{query.trim()}"</p>
-        )
-      ) : (
-        <>
-          <Section
-            title="Recommended for today"
-            caption="Inspired by your recent activity"
-            tall
-          >
-            {songs.map(renderSongCard)}
-          </Section>
-
-          <Section
-            title="Based on your recent listening"
-            caption="Inspired by your recent activity"
-            tall
-          >
-            {playlists.map((playlist) => (
-              <Card
-                key={playlist.id}
-                title={playlist.title}
-                subtitle={playlist.description}
-                cover={playlist.song.cover}
-                isActive={currentSong?.id === playlist.song.id}
-                isPlaying={isPlaying}
-                onPlay={() => onPlay(playlist.song)}
-              />
-            ))}
-          </Section>
-
-          <Section title="Suggested artists" caption="Inspired by your recent activity">
-            {artists.map((artist) => (
-              <Card
-                key={artist.id}
-                round
-                title={artist.name}
-                subtitle="Artist"
-                cover={artist.song.cover}
-                isActive={currentSong?.id === artist.song.id}
-                isPlaying={isPlaying}
-                onPlay={() => onPlay(artist.song)}
-              />
-            ))}
-          </Section>
-
-          <Section title="Popular radio">
-            {radios.map((radio) => (
-              <Card
-                key={radio.id}
-                coverClass="radio"
-                subtitle={radio.note}
-                cover={radio.color}
-                isActive={currentSong?.id === radio.song.id}
-                isPlaying={isPlaying}
-                onPlay={() => onPlay(radio.song)}
-              >
-                <div className="radio__top">
-                  <FaSpotify size={14} />
-                  <span>RADIO</span>
-                </div>
-                <div className="radio__faces" style={{ "--radio-bg": radio.color }}>
-                  <i style={{ background: radio.faces[0] }} />
-                  <i style={{ background: radio.faces[2] }} />
-                  <i style={{ background: radio.faces[1] }} />
-                </div>
-                <p className="radio__name">{radio.name}</p>
-              </Card>
-            ))}
-          </Section>
-
-          <Section title="Popular albums and singles" tall>
-            {[...songs].reverse().map(renderSongCard)}
-          </Section>
-        </>
-      )}
+      {body}
     </main>
   );
 }

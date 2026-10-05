@@ -34,26 +34,62 @@ function toggleFullscreen() {
   }
 }
 
-function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onToggleShuffle }) {
+function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onToggleShuffle, spotify }) {
   const audioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [repeat, setRepeat] = useState(false);
 
+  // Spotify track (uri) ho to SDK bajata hai, warna normal <audio> (preview/demo mp3)
+  const sdk = Boolean(song?.uri);
+  const lastUri = useRef(null);
+  const { ready: sdkReady, playUri, resume, pause, seek, setVolume: setSdkVolume, endHandlerRef } = spotify;
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !song) return;
+    if (sdk) {
+      audio.pause(); // src hatane se playback apne aap band nahi hota
+      return;
+    }
     if (isPlaying) {
       audio.play().catch(() => {});
     } else {
       audio.pause();
     }
-  }, [isPlaying, song]);
+  }, [isPlaying, song, sdk]);
+
+  // Spotify engine: naya track -> play, same track -> resume/pause
+  useEffect(() => {
+    if (!sdk) {
+      if (lastUri.current) { pause(); lastUri.current = null; }
+      return;
+    }
+    if (!sdkReady) return;
+    if (lastUri.current !== song.uri) {
+      if (!isPlaying) return;
+      lastUri.current = song.uri;
+      playUri(song.uri);
+    } else if (isPlaying) {
+      resume();
+    } else {
+      pause();
+    }
+  }, [isPlaying, song, sdk, sdkReady, playUri, resume, pause]);
+
+  // Spotify track khatam hone par: repeat ho to wahi, warna next
+  useEffect(() => {
+    endHandlerRef.current = () => {
+      if (repeat && song?.uri) playUri(song.uri);
+      else onNext();
+    };
+  });
 
   useEffect(() => {
     audioRef.current.volume = volume;
-  }, [volume]);
+    setSdkVolume(volume);
+  }, [volume, setSdkVolume]);
 
   useEffect(() => {
     audioRef.current.loop = repeat;
@@ -61,17 +97,23 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
 
   function handleSeek(e) {
     const time = Number(e.target.value);
-    audioRef.current.currentTime = time;
-    setCurrentTime(time);
+    if (sdk) {
+      seek(time * 1000);
+    } else {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
   }
 
-  const progress = duration ? (currentTime / duration) * 100 : 0;
+  const shownTime = sdk ? spotify.progress.position / 1000 : currentTime;
+  const shownDuration = sdk ? spotify.progress.duration / 1000 : duration;
+  const progress = shownDuration ? (shownTime / shownDuration) * 100 : 0;
 
   return (
     <footer className="player">
       <audio
         ref={audioRef}
-        src={song ? song.src : undefined}
+        src={song && !sdk ? song.src : undefined}
         onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
         onLoadedMetadata={(e) => setDuration(e.target.duration)}
         onEnded={onNext}
@@ -131,20 +173,20 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
 </div>
 
         <div className="player__progress">
-          <span className="player__time">{formatTime(currentTime)}</span>
+          <span className="player__time">{formatTime(shownTime)}</span>
           <input
             className="player__range"
             type="range"
             min="0"
-            max={duration || 0}
+            max={shownDuration || 0}
             step="0.1"
-            value={currentTime}
+            value={shownTime}
             onChange={handleSeek}
             disabled={!song}
             aria-label="Seek"
             style={{ "--progress": `${progress}%` }}
           />
-          <span className="player__time">{formatTime(duration)}</span>
+          <span className="player__time">{formatTime(shownDuration)}</span>
         </div>
       </div>
 

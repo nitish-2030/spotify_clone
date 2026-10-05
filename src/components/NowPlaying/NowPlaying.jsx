@@ -38,10 +38,11 @@ function NowPlaying({ open, onToggle, song }) {
           <div className="nowplaying__card">
             <h4>About the artist</h4>
             <p className="nowplaying__name">{song.artist}</p>
-            <p>
-              A made-up artist created for this demo project. Replace this text
-              with a real bio when you connect actual data.
-            </p>
+            {song.demo && (
+              <p>
+                A made-up artist created for this demo project.
+              </p>
+            )}
           </div>
         </>
       ) : (

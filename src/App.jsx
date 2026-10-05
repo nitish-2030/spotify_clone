@@ -1,16 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import TopBar from "./components/TopBar/TopBar";
 import Sidebar from "./components/Sidebar/Sidebar";
 import MainContent from "./components/MainContent/MainContent";
 import Player from "./components/Player/Player";
 import NowPlaying from "./components/NowPlaying/NowPlaying";
-import { songs, playlists, artists, radios } from "./data/songs";
+import Toast from "./components/Toast/Toast";
+import { useSpotifyPlayer } from "./hooks/useSpotifyPlayer";
+import { loadContent, MODES } from "./sources";
+import { hasSpotifyConfig, isConnected, startLogin, logout, handleAuthCallback } from "./sources/spotifyAuth";
 import "./App.css";
 
 // 1008px aur upar: library khuli hoti hai, usse neeche: rail (real Spotify se napa)
 const LIBRARY_QUERY = "(min-width: 1008px)";
 
+const MODE_KEY = "content_mode";
+const savedMode = () => {
+  const m = localStorage.getItem(MODE_KEY);
+  return m === MODES.SPOTIFY && hasSpotifyConfig ? m : MODES.GENERAL;
+};
+
 function App() {
+  // ---- content source (Spotify / General) ----
+  const [mode, setMode] = useState(savedMode);
+  const [authReady, setAuthReady] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [content, setContent] = useState(null);
+  const [toast, setToast] = useState(null);
+  const toastTimer = useRef(null);
+
+  const showToast = useCallback((message) => {
+    setToast(message);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 6000);
+  }, []);
+
   const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [query, setQuery] = useState("");
@@ -32,7 +55,69 @@ function App() {
     return () => mq.removeEventListener("change", handleChange);
   }, []);
 
+  // content ka key abhi ke mode se match na kare to naya load chal raha hai
+  const loading = !content || content.key !== `${mode}-${reloadKey}`;
+  const songs = content?.songs ?? [];
+
+  const switchMode = useCallback((next) => {
+    localStorage.setItem(MODE_KEY, next);
+    setMode(next);
+    setCurrentSong(null); // purane source ka gaana band
+    setIsPlaying(false);
+  }, []);
+
+  // Spotify redirect se wapas aane par login complete karo, phir content load hoga
+  useEffect(() => {
+    handleAuthCallback().then((r) => {
+      if (r.status === "ok") switchMode(MODES.SPOTIFY);
+      if (r.status === "error") showToast(r.message);
+      setAuthReady(true);
+    });
+  }, [switchMode, showToast]);
+
+  useEffect(() => {
+    if (!authReady) return;
+    let cancelled = false;
+    loadContent(mode, { connected: isConnected() }).then((c) => {
+      if (cancelled) return;
+      setContent({ ...c, key: `${mode}-${reloadKey}` });
+      if (c.notice) showToast(c.notice);
+    });
+    return () => { cancelled = true; };
+  }, [mode, authReady, reloadKey, showToast]);
+
+  function handleModeChange(next) {
+    if (next === MODES.SPOTIFY && !isConnected()) {
+      localStorage.setItem(MODE_KEY, MODES.SPOTIFY);
+      startLogin();
+      return;
+    }
+    if (next !== mode) switchMode(next);
+  }
+
+  function handleLogout() {
+    logout();
+    switchMode(MODES.GENERAL);
+    setReloadKey((k) => k + 1);
+  }
+
+  // Spotify player sirf tab chalta hai jab content sach me Spotify se aaya ho
+  const spotify = useSpotifyPlayer({
+    enabled: mode === MODES.SPOTIFY && content?.source === "spotify",
+    onError: (msg) => {
+      showToast(`${msg}. General content par wapas ja rahe hain.`);
+      switchMode(MODES.GENERAL);
+    },
+  });
+
   function handlePlay(song) {
+    if (song.uri) {
+      if (!spotify.ready) {
+        showToast("Spotify player abhi connect ho raha hai, 2-3 second baad try karo");
+        return;
+      }
+      spotify.activate();
+    }
     if (currentSong && currentSong.id === song.id) {
       setIsPlaying(!isPlaying);
     } else {
@@ -80,13 +165,22 @@ function App() {
     <div
       className={`app ${npOpen ? "app--np-open" : ""} ${libOpen ? "" : "app--lib-collapsed"}`}
     >
-      <TopBar query={query} onQueryChange={setQuery} />
+      <TopBar
+        query={query}
+        onQueryChange={setQuery}
+        menu={{
+          mode,
+          source: content?.source,
+          spotifyAvailable: hasSpotifyConfig,
+          spotifyConnected: isConnected(),
+          onModeChange: handleModeChange,
+          onLogout: handleLogout,
+        }}
+      />
       <Sidebar expanded={libOpen} onToggle={() => setLibOverride(!libOpen)} />
       <MainContent
-        songs={songs}
-        playlists={playlists}
-        artists={artists}
-        radios={radios}
+        content={content}
+        loading={loading}
         currentSong={currentSong}
         isPlaying={isPlaying}
         onPlay={handlePlay}
@@ -105,7 +199,9 @@ function App() {
         onPrev={() => playByOffset(-1)}
         shuffle={shuffle}
         onToggleShuffle={() => setShuffle(!shuffle)}
+        spotify={spotify}
       />
+      <Toast message={toast} />
     </div>
   );
 }
