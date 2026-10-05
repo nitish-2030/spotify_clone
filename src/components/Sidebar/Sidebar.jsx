@@ -5,6 +5,7 @@ import "./Sidebar.css";
 
 function Sidebar({ expanded, onToggle, library = [] }) {
   const hasLib = library.length > 0;
+
   // band (rail): sirf 2 icons
   if (!expanded) {
     return (
@@ -44,7 +45,7 @@ function Sidebar({ expanded, onToggle, library = [] }) {
         </button>
       </div>
 
-            {hasLib ? (
+      {hasLib ? (
         <ul className="library">
           {library.map((p) => (
             <li key={p.id}>

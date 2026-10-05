@@ -14,11 +14,8 @@ import "./App.css";
 const LIBRARY_QUERY = "(min-width: 1008px)";
 
 const MODE_KEY = "content_mode";
-const savedMode = () => {
-    const m = localStorage.getItem(MODE_KEY);
-  if (m === MODES.DEMO) return m;
-  return m === MODES.SPOTIFY && hasSpotifyConfig ? m : MODES.GENERAL;
-};
+// Har baar app khulte hi Demo (local aur Vercel dono me); mode sirf menu se badalta hai
+const savedMode = () => MODES.DEMO;
 
 function App() {
   // ---- content source (Spotify / General) ----
@@ -40,6 +37,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [shuffle, setShuffle] = useState(false);
   const [npOpen, setNpOpen] = useState(false);
+  const [view, setView] = useState("home"); // "home" | "browse"
 
   // Library: screen ki width se default milta hai, click karne par ulta ho jaata hai
   const [isWide, setIsWide] = useState(() => window.matchMedia(LIBRARY_QUERY).matches);
@@ -87,6 +85,13 @@ function App() {
     return () => { cancelled = true; };
   }, [mode, authReady, reloadKey, showToast]);
 
+  // Home / logo / browse click: search saaf, page ke hisaab se view, aur upar scroll
+  function handleView(next) {
+    setView(next);
+    setQuery("");
+    document.querySelector(".main")?.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   function handleModeChange(next) {
     if (next === MODES.SPOTIFY && !isConnected()) {
       localStorage.setItem(MODE_KEY, MODES.SPOTIFY);
@@ -106,7 +111,7 @@ function App() {
   const spotify = useSpotifyPlayer({
     enabled: mode === MODES.SPOTIFY && content?.source === "spotify",
     onError: (msg) => {
-      showToast(`${msg}. General content par wapas ja rahe hain.`);
+      showToast(`${msg}. Switching to General content.`);
       switchMode(MODES.GENERAL);
     },
   });
@@ -114,7 +119,7 @@ function App() {
   function handlePlay(song) {
     if (song.uri) {
       if (!spotify.ready) {
-        showToast("Spotify player abhi connect ho raha hai, 2-3 second baad try karo");
+        showToast("Spotify player is still connecting. Please try again in 2-3 seconds.");
         return;
       }
       spotify.activate();
@@ -144,6 +149,10 @@ function App() {
     setIsPlaying(true);
   }
 
+  // Now Playing me "Next in queue" (shuffle me next random hota hai, isliye tab nahi dikhate)
+  const nowIndex = currentSong ? songs.findIndex((s) => s.id === currentSong.id) : -1;
+  const nextSong = nowIndex >= 0 && songs.length > 1 && !shuffle ? songs[(nowIndex + 1) % songs.length] : null;
+
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.code !== "Space") return;
@@ -169,6 +178,8 @@ function App() {
       <TopBar
         query={query}
         onQueryChange={setQuery}
+        view={view}
+        onViewChange={handleView}
         menu={{
           mode,
           source: content?.source,
@@ -186,11 +197,14 @@ function App() {
         isPlaying={isPlaying}
         onPlay={handlePlay}
         query={query}
+        view={view}
       />
       <NowPlaying
         open={npOpen}
         onToggle={() => setNpOpen(!npOpen)}
         song={currentSong}
+        nextSong={nextSong}
+        onPlayNext={() => playByOffset(1)}
       />
       <Player
         song={currentSong}

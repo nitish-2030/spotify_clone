@@ -25,6 +25,7 @@ function mapTrack(t) {
     title: t.trackName,
     artist: t.artistName,
     src: t.previewUrl,
+    link: t.trackViewUrl,
     cover: imageCover(t.artworkUrl100.replace("100x100", "400x400")),
   };
 }
@@ -48,7 +49,7 @@ export async function loadGeneral() {
   const settled = await Promise.allSettled(jobs);
   const lists = settled.map((s) => (s.status === "fulfilled" ? s.value : []));
   const songs = uniqueSongs(lists.flat());
-  if (songs.length === 0) throw new Error("general source se kuch nahi mila");
+  if (songs.length === 0) throw new Error("No songs were returned by the General source");
 
   const rowSections = ROWS.map((r, i) => ({
     id: r.id, title: r.title, caption: r.caption, tall: r.tall,

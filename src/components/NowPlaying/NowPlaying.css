@@ -95,3 +95,57 @@
   color: var(--text-secondary);
   font-size: 14px;
 }
+
+/* ---------- artist link + next in queue ---------- */
+.nowplaying__card + .nowplaying__card {
+  margin-top: 16px;
+}
+
+.nowplaying__link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nowplaying__link:hover {
+  text-decoration: underline;
+}
+
+.nowplaying__next {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nowplaying__next-cover {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+}
+
+.nowplaying__next-text {
+  min-width: 0;
+}
+
+.nowplaying__next-text p {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.nowplaying__next-title {
+  color: var(--text-primary) !important;
+  font-weight: 700;
+}

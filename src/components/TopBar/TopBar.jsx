@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FaSpotify } from "react-icons/fa";
 import {
   MdInventory2,
@@ -10,24 +9,31 @@ import { FiSearch, FiBell, FiUsers } from "react-icons/fi";
 import AccountMenu from "../AccountMenu/AccountMenu";
 import "./TopBar.css";
 
-function TopBar({ query, onQueryChange, menu }) {
-  const [activePage, setActivePage] = useState("home");
+function TopBar({ query, onQueryChange, menu, view, onViewChange }) {
 
   return (
     <header className="topbar">
       <div className="topbar__left">
-        <a href="/" className="topbar__logo" aria-label="Home">
+        <a
+          href="/"
+          className="topbar__logo"
+          aria-label="Home"
+          onClick={(e) => {
+            e.preventDefault();
+            onViewChange("home");
+          }}
+        >
           <FaSpotify size={34} />
         </a>
       </div>
 
       <div className="topbar__center">
         <button
-          className={`topbar__home ${activePage === "home" ? "topbar__home--active" : ""}`}
+          className={`topbar__home ${view === "home" ? "topbar__home--active" : ""}`}
           aria-label="Home"
-          onClick={() => setActivePage("home")}
+          onClick={() => onViewChange("home")}
         >
-          {activePage === "home" ? <GoHomeFill size={26} /> : <GoHome size={26} />}
+          {view === "home" ? <GoHomeFill size={26} /> : <GoHome size={26} />}
         </button>
 
         <div className="topbar__search">
@@ -42,11 +48,11 @@ function TopBar({ query, onQueryChange, menu }) {
             onChange={(e) => onQueryChange(e.target.value)}
           />
           <button
-            className={`topbar__browse ${activePage === "browse" ? "topbar__browse--active" : ""}`}
+            className={`topbar__browse ${view === "browse" ? "topbar__browse--active" : ""}`}
             aria-label="Browse"
-            onClick={() => setActivePage("browse")}
+            onClick={() => onViewChange("browse")}
           >
-            {activePage === "browse" ? (
+            {view === "browse" ? (
               <MdInventory2 size={22} />
             ) : (
               <MdOutlineInventory2 size={22} />

@@ -70,8 +70,8 @@ export function handleAuthCallback() {
     const q = new URLSearchParams(window.location.search);
     if (!q.has("code") && !q.has("error")) return { status: "none" };
     window.history.replaceState({}, "", window.location.pathname);
-    if (q.get("error")) return { status: "error", message: `Spotify login cancel/fail: ${q.get("error")}` };
-    if (q.get("state") !== sessionStorage.getItem(K.state)) return { status: "error", message: "Login state match nahi hui, dobara try karo" };
+    if (q.get("error")) return { status: "error", message: `Spotify login was cancelled or failed: ${q.get("error")}` };
+    if (q.get("state") !== sessionStorage.getItem(K.state)) return { status: "error", message: "Login check failed. Please try again" };
     try {
       saveToken(await tokenRequest({
         grant_type: "authorization_code", code: q.get("code"),
@@ -79,7 +79,7 @@ export function handleAuthCallback() {
       }));
       return { status: "ok" };
     } catch (e) {
-      return { status: "error", message: `Spotify login fail: ${e.message}` };
+      return { status: "error", message: `Spotify login failed: ${e.message}` };
     }
   })();
   return callbackPromise;

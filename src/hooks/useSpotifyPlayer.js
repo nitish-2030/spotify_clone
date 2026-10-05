@@ -44,8 +44,8 @@ export function useSpotifyPlayer({ enabled, onError }) {
 
       player.addListener("ready", ({ device_id }) => { deviceRef.current = device_id; setReady(true); });
       player.addListener("not_ready", () => setReady(false));
-      player.addListener("initialization_error", () => onErrorRef.current?.("Ye browser Spotify player support nahi karta"));
-      player.addListener("authentication_error", () => onErrorRef.current?.("Spotify login expire ho gaya, dobara connect karo"));
+      player.addListener("initialization_error", () => onErrorRef.current?.("This browser does not support the Spotify player"));
+      player.addListener("authentication_error", () => onErrorRef.current?.("Spotify Premium is required for playback"));
       player.addListener("account_error", () => onErrorRef.current?.("Spotify Premium chahiye playback ke liye"));
       player.addListener("playback_error", ({ message }) => onErrorRef.current?.(`Playback error: ${message}`));
 
@@ -93,10 +93,24 @@ export function useSpotifyPlayer({ enabled, onError }) {
     trackRef.current = id;
     endedRef.current = false;
     clock.current = { position: 0, duration: 0, at: Date.now(), paused: true };
-    try {
-      await spotifyFetch(`/me/player/play?device_id=${deviceRef.current}`, {
+    const start = () =>
+      spotifyFetch(`/me/player/play?device_id=${deviceRef.current}`, {
         method: "PUT", body: JSON.stringify({ uris: [uri] }),
       });
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    try {
+      try {
+        await start();
+      } catch (e) {
+        if (!String(e.message).includes("404")) throw e;
+        // device abhi Spotify server par register ho raha hai: transfer karke ek baar retry
+        await wait(1200);
+        await spotifyFetch("/me/player", {
+          method: "PUT", body: JSON.stringify({ device_ids: [deviceRef.current] }),
+        });
+        await wait(800);
+        await start();
+      }
     } catch (e) {
       onErrorRef.current?.(e.message);
     }

@@ -6,15 +6,21 @@ import "./MainContent.css";
 const chips = ["All", "Music", "Podcasts"];
 
 function Section({ title, caption, wrap, tall, children }) {
+  const [expanded, setExpanded] = useState(false);
+  const showAll = wrap || expanded;
   return (
     <section className="section">
       {caption && <p className="section__caption">{caption}</p>}
       <div className="section__head">
         <h2>{title}</h2>
-        {!wrap && <button className="section__all">Show all</button>}
+        {!wrap && (
+          <button className="section__all" onClick={() => setExpanded(!expanded)}>
+            {expanded ? "Show less" : "Show all"}
+          </button>
+        )}
       </div>
       <div
-        className={`section__row ${wrap ? "section__row--all" : ""} ${tall ? "section__row--tall" : ""}`}
+        className={`section__row ${showAll ? "section__row--all" : ""} ${tall ? "section__row--tall" : ""}`}
       >
         {children}
       </div>
@@ -24,7 +30,7 @@ function Section({ title, caption, wrap, tall, children }) {
 
 // content = { songs, sections: [{ id, title, caption, tall, items: [card] }] }
 // Spotify, General aur Demo teeno isi shape me aate hain, isliye UI ek hi hai.
-function MainContent({ content, loading, currentSong, isPlaying, onPlay, query }) {
+function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, view }) {
   const [activeChip, setActiveChip] = useState("All");
 
   const q = query.trim().toLowerCase();
@@ -77,6 +83,14 @@ function MainContent({ content, loading, currentSong, isPlaying, onPlay, query }
       ) : (
         <p className="main__empty">No results found for "{query.trim()}"</p>
       );
+  } else if (activeChip === "Podcasts") {
+    body = <p className="main__empty">No podcasts to show yet</p>;
+  } else if (view === "browse") {
+    body = (
+      <Section title="Browse all" wrap>
+        {songs.map((s) => renderCard(songItem(s)))}
+      </Section>
+    );
   } else {
     body = content.sections.map((sec) => (
       <Section key={sec.id} title={sec.title} caption={sec.caption} tall={sec.tall}>

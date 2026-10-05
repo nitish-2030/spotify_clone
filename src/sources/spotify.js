@@ -5,13 +5,13 @@ import { imageCover, songCard, uniqueSongs, discoveryRows } from "./cards";
 
 export async function spotifyFetch(path, options = {}) {
   const token = await getAccessToken();
-  if (!token) throw new Error("Spotify login nahi hai");
+  if (!token) throw new Error("Not logged in to Spotify");
   const res = await fetch(`https://api.spotify.com/v1${path}`, {
     ...options,
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", ...options.headers },
   });
   if (res.status === 403) {
-    throw new Error("Spotify ne access nahi diya (Dashboard > User Management me apna email add karo)");
+    throw new Error("Spotify denied access (add your email under Dashboard > User Management)");
   }
   if (!res.ok) throw new Error(`Spotify API ${res.status}`);
   return res.status === 204 ? null : res.json();
@@ -25,6 +25,7 @@ function mapTrack(t) {
   return {
     id: `sp${t.id}`,
     uri: t.uri,
+    link: `https://open.spotify.com/track/${t.id}`,
     title: t.name,
     artist: t.artists.map((a) => a.name).join(", "),
     cover: img ? imageCover(img) : "linear-gradient(135deg, #535353, #282828)",
@@ -49,7 +50,7 @@ export async function loadSpotify() {
   const songs = uniqueSongs([...topT, ...recentT, ...savedT]);
   if (songs.length === 0) {
     const firstErr = [top, recent, saved].find((r) => r.status === "rejected");
-    throw new Error(firstErr?.reason?.message || "Spotify account me abhi koi history/liked songs nahi hain");
+    throw new Error(firstErr?.reason?.message || "No listening history or liked songs found in this Spotify account");
   }
 
   // Artist card ko play karne ke liye us artist ka koi ek track chahiye

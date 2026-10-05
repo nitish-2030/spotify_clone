@@ -6,7 +6,7 @@ function Card({ title, subtitle, cover, round, initials, coverClass = "", isActi
   return (
     <div className="card" onClick={onPlay}>
       <div
-          className={`card__cover ${round ? "card__cover--round" : ""} ${initials ? "card__cover--initials" : ""} ${coverClass}`}
+        className={`card__cover ${round ? "card__cover--round" : ""} ${initials ? "card__cover--initials" : ""} ${coverClass}`}
         style={{ background: cover }}
       >
         {initials && <span className="card__initials">{initials}</span>}

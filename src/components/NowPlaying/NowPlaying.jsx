@@ -1,7 +1,7 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import "./NowPlaying.css";
 
-function NowPlaying({ open, onToggle, song }) {
+function NowPlaying({ open, onToggle, song, nextSong, onPlayNext }) {
   if (!open) {
     return (
       <aside className="nowplaying nowplaying--closed">
@@ -43,7 +43,27 @@ function NowPlaying({ open, onToggle, song }) {
                 A made-up artist created for this demo project.
               </p>
             )}
+            {song.uri && <p>Playing from your Spotify account.</p>}
+            {!song.demo && !song.uri && <p>30-second preview from Apple Music.</p>}
+            {song.link && (
+              <a className="nowplaying__link" href={song.link} target="_blank" rel="noreferrer">
+                {song.uri ? "Open in Spotify" : "Open in Apple Music"}
+              </a>
+            )}
           </div>
+
+          {nextSong && (
+            <div className="nowplaying__card">
+              <h4>Next in queue</h4>
+              <button className="nowplaying__next" onClick={onPlayNext}>
+                <div className="nowplaying__next-cover" style={{ background: nextSong.cover }} />
+                <div className="nowplaying__next-text">
+                  <p className="nowplaying__next-title">{nextSong.title}</p>
+                  <p>{nextSong.artist}</p>
+                </div>
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <p className="nowplaying__empty">

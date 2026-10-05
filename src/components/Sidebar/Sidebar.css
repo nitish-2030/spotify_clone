@@ -146,7 +146,6 @@
   display: block;
 }
 
-
 /* ---------- Your Library: playlist rows (sirf Spotify mode) ---------- */
 .sidebar--has-library .sidebar__header {
   margin-bottom: 8px; /* cards nahi hain, to itna gap kaafi */

@@ -13,7 +13,7 @@ export async function loadContent(mode, { connected }) {
   const chain = [];
   if (mode === MODES.SPOTIFY) {
     if (connected) chain.push(["spotify", loadSpotify]);
-    else chain.push(["spotify", async () => { throw new Error("Spotify connect nahi hai"); }]);
+    else chain.push(["spotify", async () => { throw new Error("Spotify is not connected"); }]);
   }
     if (mode !== MODES.DEMO) chain.push(["general", loadGeneral]);
   chain.push(["demo", loadDemo]);
@@ -25,7 +25,7 @@ export async function loadContent(mode, { connected }) {
       const data = await withTimeout(load(), 10000);
       return { ...data, source, notice };
     } catch (e) {
-      notice ??= `${source === "spotify" ? "Spotify" : "General"} content load nahi hua (${e.message}). Fallback chal raha hai.`;
+      notice ??= `${source === "spotify" ? "Spotify" : "General"} content could not be loaded (${e.message}). Showing fallback content.`;
     }
   }
 }

@@ -1,6 +1,6 @@
 .app {
   /* sidebar ki width: khuli = 280px, rail (band) = 72px (real Spotify se napa) */
-  --sidebar-w: 280px;
+  --sidebar-w: clamp(280px, 25vw, 420px);
 
   height: 100dvh;
   display: grid;
