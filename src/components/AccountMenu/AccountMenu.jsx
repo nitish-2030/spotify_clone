@@ -43,6 +43,10 @@ function AccountMenu({ mode, source, spotifyAvailable, spotifyConnected, onModeC
               {mode === "spotify" && <FiCheck size={16} />}
             </button>
           )}
+          <button className="account__item" role="menuitemradio" aria-checked={mode === "demo"} onClick={() => pick("demo")}>
+            <span>Demo</span>
+            {mode === "demo" && <FiCheck size={16} />}
+          </button>
           <p className="account__hint">Showing: {source === "spotify" ? "Spotify" : source === "general" ? "General" : "Demo"}</p>
           {spotifyConnected && (
             <button className="account__item account__item--sep" onClick={() => { setOpen(false); onLogout(); }}>

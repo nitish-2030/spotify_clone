@@ -15,7 +15,8 @@ const LIBRARY_QUERY = "(min-width: 1008px)";
 
 const MODE_KEY = "content_mode";
 const savedMode = () => {
-  const m = localStorage.getItem(MODE_KEY);
+    const m = localStorage.getItem(MODE_KEY);
+  if (m === MODES.DEMO) return m;
   return m === MODES.SPOTIFY && hasSpotifyConfig ? m : MODES.GENERAL;
 };
 
