@@ -4,6 +4,19 @@
 
 const RADIO_COLORS = ["#ffd978", "#8fead8", "#ffa575", "#ff9fb3", "#b9a8ff", "#9ad8ff"];
 
+// Artist ke naam se hamesha same gradient + initials (photo nahi hai to)
+function nameHue(name) {
+  let h = 0;
+  for (const ch of name) h = (h * 31 + ch.codePointAt(0)) % 360;
+  return h;
+}
+const nameGradient = (name) => {
+  const h = nameHue(name);
+  return `linear-gradient(135deg, hsl(${h} 60% 46%), hsl(${(h + 40) % 360} 65% 28%))`;
+};
+const initialsOf = (name) =>
+  name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => Array.from(w)[0].toUpperCase()).join("");
+
 export const imageCover = (url) => `url("${url}") center / cover no-repeat, #282828`;
 
 export const songCard = (song) => ({
@@ -24,7 +37,8 @@ export function artistCards(songs, max = 8) {
     id: `a-${name}`,
     title: name,
     subtitle: "Artist",
-    cover: song.cover,
+    cover: nameGradient(name),
+    initials: initialsOf(name),
     round: true,
     song,
   }));

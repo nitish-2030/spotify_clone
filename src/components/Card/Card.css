@@ -75,3 +75,19 @@
 .card__cover + .card__subtitle {
   margin-top: 12px;
 }
+
+/* artist photo nahi hai: gradient circle + initials */
+.card__cover--initials {
+  display: grid;
+  place-items: center;
+  container-type: inline-size; /* font cover ki width ke hisaab se */
+}
+
+.card__initials {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 34cqw;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  user-select: none;
+}

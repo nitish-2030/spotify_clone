@@ -178,7 +178,7 @@ function App() {
           onLogout: handleLogout,
         }}
       />
-      <Sidebar expanded={libOpen} onToggle={() => setLibOverride(!libOpen)} />
+      <Sidebar expanded={libOpen} onToggle={() => setLibOverride(!libOpen)} library={loading ? [] : content?.library} />
       <MainContent
         content={content}
         loading={loading}

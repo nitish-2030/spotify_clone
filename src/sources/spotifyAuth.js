@@ -10,6 +10,7 @@ const SCOPES = [
   "streaming", "user-read-email", "user-read-private",
   "user-read-playback-state", "user-modify-playback-state",
   "user-top-read", "user-read-recently-played", "user-library-read",
+  "playlist-read-private", "playlist-read-collaborative",
 ].join(" ");
 
 const K = { token: "sp_token", verifier: "sp_verifier", state: "sp_state" };

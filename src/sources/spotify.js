@@ -32,11 +32,12 @@ function mapTrack(t) {
 }
 
 export async function loadSpotify() {
-  const [top, recent, saved, artists] = await Promise.allSettled([
+  const [top, recent, saved, artists, playlists] = await Promise.allSettled([
     spotifyFetch("/me/top/tracks?limit=20&time_range=medium_term"),
     spotifyFetch("/me/player/recently-played?limit=20"),
     spotifyFetch("/me/tracks?limit=20"),
     spotifyFetch("/me/top/artists?limit=12&time_range=medium_term"),
+    spotifyFetch("/me/playlists?limit=20"),
   ]);
 
   const tracks = (r, pick = (x) => x) =>
@@ -76,5 +77,22 @@ export async function loadSpotify() {
     savedT.length && { id: "saved", title: "From your Liked Songs", tall: true, items: savedT.map(songCard) },
   ].filter(Boolean);
 
-  return { songs, sections: [...rows.slice(0, 2), ...discovery, ...rows.slice(2)] };
+  // Library (sidebar): playlists fail ho jaaye to library [] rehti hai, baaki content chalta rehta hai
+  const library =
+    playlists.status === "fulfilled"
+      ? (playlists.value?.items ?? [])
+          .filter((p) => p?.id)
+          .map((p) => {
+            const img = pickImage(p.images ?? []);
+            return {
+              id: `pl-${p.id}`,
+              title: p.name,
+              subtitle: `Playlist • ${p.owner?.display_name ?? "Spotify"}`,
+              cover: img ? imageCover(img) : "linear-gradient(135deg, #535353, #282828)",
+              url: p.external_urls?.spotify,
+            };
+          })
+      : [];
+
+  return { songs, sections: [...rows.slice(0, 2), ...discovery, ...rows.slice(2)], library };
 }

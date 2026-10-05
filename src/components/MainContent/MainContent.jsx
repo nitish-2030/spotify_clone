@@ -37,6 +37,7 @@ function MainContent({ content, loading, currentSong, isPlaying, onPlay, query }
     <Card
       key={item.id}
       round={item.round}
+      initials={item.initials}
       coverClass={item.radio ? "radio" : ""}
       title={item.title}
       subtitle={item.subtitle}

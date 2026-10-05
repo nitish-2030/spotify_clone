@@ -2,13 +2,14 @@ import { FaPlay, FaPause } from "react-icons/fa";
 import "./Card.css";
 
 // round = gol cover (artist), coverClass = extra class, children = cover ke andar ka extra content
-function Card({ title, subtitle, cover, round, coverClass = "", isActive, isPlaying, onPlay, children }) {
+function Card({ title, subtitle, cover, round, initials, coverClass = "", isActive, isPlaying, onPlay, children }) {
   return (
     <div className="card" onClick={onPlay}>
       <div
-        className={`card__cover ${round ? "card__cover--round" : ""} ${coverClass}`}
+          className={`card__cover ${round ? "card__cover--round" : ""} ${initials ? "card__cover--initials" : ""} ${coverClass}`}
         style={{ background: cover }}
       >
+        {initials && <span className="card__initials">{initials}</span>}
         {children}
         <button
           className={`card__play ${isActive ? "card__play--active" : ""}`}

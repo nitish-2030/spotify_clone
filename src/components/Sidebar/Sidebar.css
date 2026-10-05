@@ -145,3 +145,63 @@
 .sidebar__open:hover .sidebar__open-hover {
   display: block;
 }
+
+
+/* ---------- Your Library: playlist rows (sirf Spotify mode) ---------- */
+.sidebar--has-library .sidebar__header {
+  margin-bottom: 8px; /* cards nahi hain, to itna gap kaafi */
+}
+
+.library {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.library__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.library__row:hover {
+  background: var(--bg-hover);
+}
+
+.library__cover {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+}
+
+.library__text {
+  min-width: 0; /* taaki ellipsis chale */
+}
+
+.library__title,
+.library__sub {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.library__title {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.library__sub {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
