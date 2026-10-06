@@ -1,5 +1,5 @@
-// Spotify content: sirf wahi endpoints jo Development Mode me chalte hain
-// (top tracks/artists, recently played, liked songs). Ek fail ho to baaki chalte hain.
+// Spotify content: only endpoints that work in Development Mode
+// (top tracks/artists, recently played, liked songs). If one fails the rest still work.
 import { getAccessToken } from "./spotifyAuth";
 import { imageCover, songCard, uniqueSongs, discoveryRows } from "./cards";
 
@@ -32,6 +32,12 @@ function mapTrack(t) {
   };
 }
 
+// Live search used by the search bar (Development Mode caps the page size at 10)
+export async function searchSpotify(query) {
+  const data = await spotifyFetch(`/search?q=${encodeURIComponent(query)}&type=track&limit=10`);
+  return (data?.tracks?.items ?? []).map(mapTrack).filter(Boolean);
+}
+
 export async function loadSpotify() {
   const [top, recent, saved, artists, playlists] = await Promise.allSettled([
     spotifyFetch("/me/top/tracks?limit=20&time_range=medium_term"),
@@ -53,7 +59,7 @@ export async function loadSpotify() {
     throw new Error(firstErr?.reason?.message || "No listening history or liked songs found in this Spotify account");
   }
 
-  // Artist card ko play karne ke liye us artist ka koi ek track chahiye
+  // An artist card needs one playable track by that artist
   const artistCards =
     artists.status === "fulfilled"
       ? (artists.value?.items ?? [])
@@ -78,7 +84,7 @@ export async function loadSpotify() {
     savedT.length && { id: "saved", title: "From your Liked Songs", tall: true, items: savedT.map(songCard) },
   ].filter(Boolean);
 
-  // Library (sidebar): playlists fail ho jaaye to library [] rehti hai, baaki content chalta rehta hai
+  // Library (sidebar): if playlists fail, library stays [] and everything else still works
   const library =
     playlists.status === "fulfilled"
       ? (playlists.value?.items ?? [])

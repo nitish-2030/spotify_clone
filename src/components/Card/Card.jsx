@@ -1,7 +1,8 @@
 import { FaPlay, FaPause } from "react-icons/fa";
 import "./Card.css";
 
-// round = gol cover (artist), coverClass = extra class, children = cover ke andar ka extra content
+// round = circular cover (artist), initials = letters when there is no photo,
+// coverClass = extra class, children = extra content inside the cover
 function Card({ title, subtitle, cover, round, initials, coverClass = "", isActive, isPlaying, onPlay, children }) {
   return (
     <div className="card" onClick={onPlay}>

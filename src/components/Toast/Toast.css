@@ -1,7 +1,7 @@
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 88px; /* player (72px) ke upar */
+  bottom: 88px; /* above the player (72px) */
   transform: translateX(-50%);
   z-index: 60;
   max-width: min(560px, calc(100vw - 32px));

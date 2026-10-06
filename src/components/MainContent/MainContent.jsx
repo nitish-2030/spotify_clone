@@ -1,9 +1,89 @@
 import { useState } from "react";
-import { FaSpotify } from "react-icons/fa";
+import { FaSpotify, FaInstagram, FaTwitter, FaFacebook } from "react-icons/fa";
 import Card from "../Card/Card";
+import { uniqueSongs } from "../../sources/cards";
 import "./MainContent.css";
 
 const chips = ["All", "Music", "Podcasts"];
+
+// Grey placeholder cards shown while the content is loading
+function Skeleton() {
+  return (
+    <div className="skeleton" aria-busy="true" aria-label="Loading your music">
+      {[0, 1, 2].map((row) => (
+        <div key={row} className="skeleton__section">
+          <div className="skeleton__title" />
+          <div className="skeleton__row">
+            {Array.from({ length: 8 }, (_, i) => (
+              <div key={i} className="skeleton__card">
+                <div className="skeleton__cover" />
+                <div className="skeleton__line" />
+                <div className="skeleton__line skeleton__line--short" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const FOOTER_COLUMNS = [
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "https://www.spotify.com/about-us/contact/" },
+      { label: "Jobs", href: "https://www.lifeatspotify.com/" },
+      { label: "For the Record", href: "https://newsroom.spotify.com/" },
+    ],
+  },
+  {
+    title: "Communities",
+    links: [
+      { label: "For Artists", href: "https://artists.spotify.com/" },
+      { label: "Developers", href: "https://developer.spotify.com/" },
+      { label: "Advertising", href: "https://ads.spotify.com/" },
+    ],
+  },
+  {
+    title: "Useful links",
+    links: [
+      { label: "Support", href: "https://support.spotify.com/" },
+      { label: "Free Mobile App", href: "https://www.spotify.com/download/" },
+    ],
+  },
+];
+
+function Footer() {
+  return (
+    <footer className="footer">
+      <div className="footer__top">
+        <div className="footer__columns">
+          {FOOTER_COLUMNS.map((col) => (
+            <div key={col.title} className="footer__col">
+              <h3>{col.title}</h3>
+              <ul>
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <a href={l.href} target="_blank" rel="noreferrer">{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="footer__social">
+          <a href="https://www.instagram.com/spotify" target="_blank" rel="noreferrer" aria-label="Instagram"><FaInstagram size={16} /></a>
+          <a href="https://twitter.com/spotify" target="_blank" rel="noreferrer" aria-label="Twitter"><FaTwitter size={16} /></a>
+          <a href="https://www.facebook.com/Spotify" target="_blank" rel="noreferrer" aria-label="Facebook"><FaFacebook size={16} /></a>
+        </div>
+      </div>
+      <div className="footer__bottom">
+        <p>&copy; {new Date().getFullYear()} Spotify Clone. A learning project, not affiliated with Spotify AB.</p>
+      </div>
+    </footer>
+  );
+}
 
 function Section({ title, caption, wrap, tall, children }) {
   const [expanded, setExpanded] = useState(false);
@@ -29,17 +109,20 @@ function Section({ title, caption, wrap, tall, children }) {
 }
 
 // content = { songs, sections: [{ id, title, caption, tall, items: [card] }] }
-// Spotify, General aur Demo teeno isi shape me aate hain, isliye UI ek hi hai.
-function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, view }) {
+// Demo, General and Spotify all produce this same shape, so the UI is the same for all of them.
+// search = { results: [song], searching: boolean } from useSearch
+function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, view, search }) {
   const [activeChip, setActiveChip] = useState("All");
+  // Which section the playing song was started from. The same song can sit in several sections
+  // (e.g. a song row and an artist card), and only the card that was clicked should light up.
+  const [playingSection, setPlayingSection] = useState(null);
 
-  const q = query.trim().toLowerCase();
+  const q = query.trim();
   const songs = content?.songs ?? [];
-  const results = q
-    ? songs.filter((s) => s.title.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q))
-    : [];
 
-  const renderCard = (item) => (
+  // `list` = the songs of the row this card is in, so next/previous stay inside that row
+  // `sectionId` = the section the card is in, `visible` = ids of all sections on screen
+  const renderCard = (item, list, sectionId, visible) => (
     <Card
       key={item.id}
       round={item.round}
@@ -48,9 +131,16 @@ function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, 
       title={item.title}
       subtitle={item.subtitle}
       cover={item.cover}
-      isActive={currentSong?.id === item.song.id}
+      isActive={
+        currentSong?.id === item.song.id &&
+        (!visible.includes(playingSection) || playingSection === sectionId)
+      }
       isPlaying={isPlaying}
-      onPlay={() => onPlay(item.song)}
+      onPlay={() => {
+        const switchContext = playingSection !== sectionId;
+        setPlayingSection(sectionId);
+        onPlay(item.song, list, { switchContext });
+      }}
     >
       {item.radio && (
         <>
@@ -73,30 +163,37 @@ function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, 
 
   let body;
   if (loading || !content) {
-    body = <p className="main__empty">Loading your music…</p>;
+    body = <Skeleton />;
   } else if (q) {
+    const { results, searching } = search;
     body =
       results.length > 0 ? (
-        <Section title={`Results for "${query.trim()}"`} wrap>
-          {results.map((s) => renderCard(songItem(s)))}
+        <Section title={`Results for "${q}"`} wrap>
+          {results.map((s) => renderCard(songItem(s), results, "search", ["search"]))}
         </Section>
+      ) : searching ? (
+        <p className="main__empty">Searching…</p>
       ) : (
-        <p className="main__empty">No results found for "{query.trim()}"</p>
+        <p className="main__empty">No results found for "{q}"</p>
       );
   } else if (activeChip === "Podcasts") {
     body = <p className="main__empty">No podcasts to show yet</p>;
   } else if (view === "browse") {
     body = (
       <Section title="Browse all" wrap>
-        {songs.map((s) => renderCard(songItem(s)))}
+        {songs.map((s) => renderCard(songItem(s), songs, "browse", ["browse"]))}
       </Section>
     );
   } else {
-    body = content.sections.map((sec) => (
-      <Section key={sec.id} title={sec.title} caption={sec.caption} tall={sec.tall}>
-        {sec.items.map(renderCard)}
-      </Section>
-    ));
+    const visible = content.sections.map((sec) => sec.id);
+    body = content.sections.map((sec) => {
+      const list = uniqueSongs(sec.items.map((item) => item.song));
+      return (
+        <Section key={sec.id} title={sec.title} caption={sec.caption} tall={sec.tall}>
+          {sec.items.map((item) => renderCard(item, list, sec.id, visible))}
+        </Section>
+      );
+    });
   }
 
   return (
@@ -113,6 +210,7 @@ function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, 
         ))}
       </div>
       {body}
+      {!loading && content && <Footer />}
     </main>
   );
 }

@@ -1,4 +1,4 @@
-// Last fallback: local demo data. Kabhi fail nahi hota, internet ki zaroorat nahi.
+// Last fallback: local demo data. Never fails and needs no internet.
 import { songs as rawSongs, playlists } from "../data/songs";
 import { songCard, discoveryRows } from "./cards";
 

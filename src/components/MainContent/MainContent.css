@@ -1,8 +1,8 @@
 .main {
-  /* card ki width screen ki width se aati hai, main panel se nahi (real Spotify jaisa) */
+  /* card width follows the screen width, not the main panel (like real Spotify) */
   --card-w: clamp(177px, calc(177px + (100vw - 1008px) * 0.0459), 195.6px);
   --card-pad: 12px;
-  --row-h: 295px; /* gaane/playlist row ki height: real mein 294 (@1400) aur 296 (@1008) */
+  --row-h: 295px; /* song/playlist row height: real Spotify measures 294 (@1400) and 296 (@1008) */
   background: linear-gradient(to bottom, #1b3336 0, var(--bg-panel) 280px);
   border-radius: 8px;
   padding: 20px 40px 24px;
@@ -89,9 +89,9 @@
 }
 
 /*
-  Ek hi row dikhane ka trick: pehli row auto, baaki rows 0 height + overflow hidden.
-  Row ko right side main ke kinare tak (aur ek card aage tak) badhaya hai,
-  taaki last card aadha kata hua dikhe, jaisa real Spotify mein hota hai.
+  Trick to show only one row: the first row is auto height, the other rows are 0 height + overflow hidden.
+  The row is stretched to the right edge of the panel (plus one card),
+  so the last card shows half cut off, like in real Spotify.
 */
 .section__row {
   display: grid;
@@ -103,12 +103,12 @@
   margin: 0 calc(-40px - var(--card-w)) 0 calc(var(--card-pad) * -1);
 }
 
-/* gaane / playlist rows: row ki height = sabse lambe card jitni */
+/* song / playlist rows: row height = tallest card */
 .section__row--tall {
   grid-template-rows: minmax(var(--row-h), auto);
 }
 
-/* search results: saare cards wrap hoke dikhte hain */
+/* search results / show all: every card wraps into a grid */
 .section__row--all {
   grid-template-rows: none;
   grid-auto-rows: auto;
@@ -122,7 +122,7 @@
   text-align: center;
 }
 
-/* ---------- popular radio card ke andar ka design ---------- */
+/* ---------- design inside the popular radio card ---------- */
 .radio {
   overflow: hidden;
 }
@@ -190,7 +190,7 @@
   line-height: 1.1;
 }
 
-/* 1007px aur neeche card chhote hote hain (ESTIMATE, neeche ke sizes napne baaki) */
+/* at 1007px and below the cards get smaller (ESTIMATE, sizes below are not measured yet) */
 @media (max-width: 1007px) {
   .main {
     --card-w: clamp(112px, calc(111px + (100vw - 500px) * 0.1303), 177px);
@@ -211,4 +211,420 @@
   .section__head h2 {
     font-size: 20px;
   }
+}
+/* ---------- loading skeleton (shown while content loads) ---------- */
+.skeleton__section {
+  margin-bottom: 32px;
+}
+
+.skeleton__title {
+  width: 240px;
+  height: 24px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.skeleton__row {
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+  margin: 0 calc(var(--card-pad) * -1);
+}
+
+.skeleton__card {
+  flex: none;
+  width: var(--card-w);
+  padding: var(--card-pad);
+  box-sizing: content-box;
+}
+
+.skeleton__cover {
+  aspect-ratio: 1;
+  border-radius: 6px;
+}
+
+.skeleton__line {
+  width: 85%;
+  height: 12px;
+  margin-top: 14px;
+  border-radius: 4px;
+}
+
+.skeleton__line--short {
+  width: 55%;
+  margin-top: 8px;
+}
+
+.skeleton__title,
+.skeleton__cover,
+.skeleton__line {
+  background: linear-gradient(90deg, #232323 25%, #2e2e2e 50%, #232323 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton__title,
+  .skeleton__cover,
+  .skeleton__line {
+    animation: none;
+  }
+}
+.main {
+  /* card width follows the screen width, not the main panel (like real Spotify) */
+  --card-w: clamp(177px, calc(177px + (100vw - 1008px) * 0.0459), 195.6px);
+  --card-pad: 12px;
+  --row-h: 295px; /* song/playlist row height: real Spotify measures 294 (@1400) and 296 (@1008) */
+  background: linear-gradient(to bottom, #1b3336 0, var(--bg-panel) 280px);
+  border-radius: 8px;
+  padding: 20px 40px 24px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.main__chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.main__chip {
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 500px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.main__chip:hover {
+  background: var(--bg-hover);
+}
+
+.main__chip--active {
+  background: var(--text-primary);
+  color: #000;
+}
+
+.section {
+  margin-bottom: 22px;
+}
+
+.section__caption {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.section__head h2 {
+  min-width: 0;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 32px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section__all {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.section__all:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/*
+  Trick to show only one row: the first row is auto height, the other rows are 0 height + overflow hidden.
+  The row is stretched to the right edge of the panel (plus one card),
+  so the last card shows half cut off, like in real Spotify.
+*/
+.section__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--card-w));
+  justify-content: start;
+  grid-template-rows: auto;
+  grid-auto-rows: 0;
+  overflow: hidden;
+  margin: 0 calc(-40px - var(--card-w)) 0 calc(var(--card-pad) * -1);
+}
+
+/* song / playlist rows: row height = tallest card */
+.section__row--tall {
+  grid-template-rows: minmax(var(--row-h), auto);
+}
+
+/* search results / show all: every card wraps into a grid */
+.section__row--all {
+  grid-template-rows: none;
+  grid-auto-rows: auto;
+  margin-right: calc(var(--card-pad) * -1);
+}
+
+.main__empty {
+  margin: 48px 0;
+  color: var(--text-secondary);
+  font-size: 16px;
+  text-align: center;
+}
+
+/* ---------- design inside the popular radio card ---------- */
+.radio {
+  overflow: hidden;
+}
+
+.radio__top {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #000;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.radio__faces {
+  position: absolute;
+  top: 20%;
+  right: 0;
+  left: 0;
+  height: 46%;
+}
+
+.radio__faces i {
+  position: absolute;
+  top: 50%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--radio-bg);
+  transform: translateY(-50%);
+}
+
+.radio__faces i:nth-child(1) {
+  left: -8%;
+  height: 76%;
+}
+
+.radio__faces i:nth-child(2) {
+  right: -8%;
+  height: 76%;
+}
+
+.radio__faces i:nth-child(3) {
+  left: 50%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.radio__name {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  left: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  color: #000;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+/* at 1007px and below the cards get smaller (ESTIMATE, sizes below are not measured yet) */
+@media (max-width: 1007px) {
+  .main {
+    --card-w: clamp(112px, calc(111px + (100vw - 500px) * 0.1303), 177px);
+    --row-h: calc(var(--card-w) + 118px);
+  }
+}
+
+@media (max-width: 700px) {
+  .main {
+    --card-pad: 8px;
+    padding: 16px 16px 24px;
+  }
+
+  .section__row {
+    margin-right: calc(-16px - var(--card-w));
+  }
+
+  .section__head h2 {
+    font-size: 20px;
+  }
+}
+/* ---------- loading skeleton (shown while content loads) ---------- */
+.skeleton__section {
+  margin-bottom: 32px;
+}
+
+.skeleton__title {
+  width: 240px;
+  height: 24px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.skeleton__row {
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+  margin: 0 calc(var(--card-pad) * -1);
+}
+
+.skeleton__card {
+  flex: none;
+  width: var(--card-w);
+  padding: var(--card-pad);
+  box-sizing: content-box;
+}
+
+.skeleton__cover {
+  aspect-ratio: 1;
+  border-radius: 6px;
+}
+
+.skeleton__line {
+  width: 85%;
+  height: 12px;
+  margin-top: 14px;
+  border-radius: 4px;
+}
+
+.skeleton__line--short {
+  width: 55%;
+  margin-top: 8px;
+}
+
+.skeleton__title,
+.skeleton__cover,
+.skeleton__line {
+  background: linear-gradient(90deg, #232323 25%, #2e2e2e 50%, #232323 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton__title,
+  .skeleton__cover,
+  .skeleton__line {
+    animation: none;
+  }
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  margin: 32px -40px -24px;
+  padding: 40px 40px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.footer__columns {
+  display: flex;
+  gap: 64px;
+  flex-wrap: wrap;
+}
+
+.footer__col h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.footer__col ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer__col li + li {
+  margin-top: 8px;
+}
+
+.footer__col a {
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.footer__col a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.footer__social {
+  display: flex;
+  gap: 12px;
+}
+
+.footer__social a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.footer__social a:hover {
+  background: var(--bg-hover);
+}
+
+.footer__bottom {
+  margin-top: 40px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.footer__bottom p {
+  margin: 0;
 }

@@ -1,8 +1,8 @@
-// Spotify login: Authorization Code + PKCE (frontend only, client secret ki zaroorat nahi)
+// Spotify login: Authorization Code + PKCE (frontend only, no client secret needed)
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 export const hasSpotifyConfig = Boolean(CLIENT_ID);
 
-// Ye EXACT value Spotify Dashboard ke Redirect URIs me add karni hai (trailing "/" ke saath)
+// This EXACT value must be added to the Redirect URIs in the Spotify Dashboard (with the trailing "/")
 export const REDIRECT_URI =
   import.meta.env.VITE_SPOTIFY_REDIRECT_URI || `${window.location.origin}/`;
 
@@ -62,8 +62,8 @@ async function tokenRequest(body) {
   return res.json();
 }
 
-// Redirect se wapas aane par ek baar chalta hai. Promise cache hai taaki
-// React StrictMode (dev me double effect) code ko do baar exchange na kare.
+// Runs once when we come back from the redirect. The promise is cached so
+// React StrictMode (double effects in dev) never exchanges the code twice.
 let callbackPromise = null;
 export function handleAuthCallback() {
   callbackPromise ??= (async () => {

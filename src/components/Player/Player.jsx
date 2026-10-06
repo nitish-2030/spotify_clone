@@ -17,6 +17,7 @@ import {
   MdOutlinePictureInPictureAlt,
 } from "react-icons/md";
 import { HiOutlineQueueList } from "react-icons/hi2";
+import { usePersistentState } from "../../hooks/usePersistentState";
 import "./Player.css";
 
 function formatTime(seconds) {
@@ -34,14 +35,14 @@ function toggleFullscreen() {
   }
 }
 
-function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onToggleShuffle, spotify }) {
+function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onToggleShuffle, spotify, onToggleQueue }) {
   const audioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const [repeat, setRepeat] = useState(false);
+  const [volume, setVolume] = usePersistentState("pref:volume", 1);
+  const [repeat, setRepeat] = usePersistentState("pref:repeat", false);
 
-  // Spotify track (uri) ho to SDK bajata hai, warna normal <audio> (preview/demo mp3)
+  // A Spotify track (has a uri) plays through the SDK, everything else through the <audio> element
   const sdk = Boolean(song?.uri);
   const lastUri = useRef(null);
   const { ready: sdkReady, playUri, resume, pause, seek, setVolume: setSdkVolume, endHandlerRef } = spotify;
@@ -50,7 +51,7 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
     const audio = audioRef.current;
     if (!audio || !song) return;
     if (sdk) {
-      audio.pause(); // src hatane se playback apne aap band nahi hota
+      audio.pause(); // removing the src does not stop playback by itself
       return;
     }
     if (isPlaying) {
@@ -60,7 +61,7 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
     }
   }, [isPlaying, song, sdk]);
 
-  // Spotify engine: naya track -> play, same track -> resume/pause
+  // Spotify engine: new track -> play, same track -> resume/pause
   useEffect(() => {
     if (!sdk) {
       if (lastUri.current) { pause(); lastUri.current = null; }
@@ -78,7 +79,7 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
     }
   }, [isPlaying, song, sdk, sdkReady, playUri, resume, pause]);
 
-  // Spotify track khatam hone par: repeat ho to wahi, warna next
+  // When a Spotify track ends: repeat replays it, otherwise go to the next song
   useEffect(() => {
     endHandlerRef.current = () => {
       if (repeat && song?.uri) playUri(song.uri);
@@ -194,7 +195,7 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
         <button className="player__icon-btn player__extra" aria-label="Lyrics">
           <TbMicrophone2 size={16}/>
         </button>
-        <button className="player__icon-btn player__extra" aria-label="Queue">
+        <button className="player__icon-btn player__extra" aria-label="Queue" onClick={onToggleQueue}>
           <HiOutlineQueueList size={20}/>
         </button>
         <button className="player__icon-btn player__extra" aria-label="Connect to a device">

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FiCheck } from "react-icons/fi";
 import "./AccountMenu.css";
 
-// Avatar dropdown: yahin se content source switch hota hai (Spotify / General)
+// Avatar dropdown: switch the content source here (General / Spotify / Demo)
 function AccountMenu({ mode, source, spotifyAvailable, spotifyConnected, onModeChange, onLogout }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);

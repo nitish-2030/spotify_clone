@@ -1,6 +1,6 @@
 .player {
   display: grid;
-  /* real Spotify: left 30% / center 40% / right 30% (player ki poori width ka) */
+  /* real Spotify: left 30% / center 40% / right 30% (of the full player width) */
   grid-template-columns: 30% 40% 30%;
   align-items: center;
   padding: 0;
@@ -14,7 +14,7 @@
   align-items: center;
   gap: 16px;
   min-width: 0;
-  margin-right: 8px; /* real mein left box right se 8px chhota hai (287 vs 295 @1000px) */
+  margin-right: 8px; /* in real Spotify the left box is 8px narrower than the right (287 vs 295 @1000px) */
   padding-left: 8px;
 }
 
@@ -109,7 +109,7 @@
   color: #1ed760;
 }
 
-/* shuffle / repeat ON hone par neeche chhota green dot (real Spotify jaisa) */
+/* small green dot below shuffle / repeat when ON (like real Spotify) */
 .player__btn--on::after {
   content: "";
   position: absolute;
@@ -145,7 +145,7 @@
 
 .player__time {
   flex-shrink: 0;
-  width: 50px; /* real: 50px box, bar se 8px gap */
+  width: 50px; /* real Spotify: 50px box, 8px gap from the bar */
 }
 
 .player__time:first-child {
@@ -183,7 +183,7 @@
 }
 
 .player__range.player__volume {
-  flex: 0 1 93px; /* real: 93px, jagah kam ho to shrink */
+  flex: 0 1 93px; /* real Spotify: 93px, shrinks when space is tight */
   min-width: 0;
   margin: 0 4px;
 }
@@ -191,7 +191,7 @@
 /* ---------- range sliders (progress + volume) ---------- */
 .player__range {
   flex: 1;
-  min-width: 0; /* range ki default ~129px width ko shrink hone do, warna center overlap karta hai */
+  min-width: 0; /* let the range's default ~129px width shrink, otherwise the center section overlaps */
   height: 4px;
   border-radius: 2px;
   background: linear-gradient(

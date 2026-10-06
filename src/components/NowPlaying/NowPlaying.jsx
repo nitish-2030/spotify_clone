@@ -1,7 +1,7 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import "./NowPlaying.css";
 
-function NowPlaying({ open, onToggle, song, nextSong, onPlayNext }) {
+function NowPlaying({ open, onToggle, song, upNext = [], onPlayUpNext }) {
   if (!open) {
     return (
       <aside className="nowplaying nowplaying--closed">
@@ -52,16 +52,18 @@ function NowPlaying({ open, onToggle, song, nextSong, onPlayNext }) {
             )}
           </div>
 
-          {nextSong && (
+          {upNext.length > 0 && (
             <div className="nowplaying__card">
               <h4>Next in queue</h4>
-              <button className="nowplaying__next" onClick={onPlayNext}>
-                <div className="nowplaying__next-cover" style={{ background: nextSong.cover }} />
-                <div className="nowplaying__next-text">
-                  <p className="nowplaying__next-title">{nextSong.title}</p>
-                  <p>{nextSong.artist}</p>
-                </div>
-              </button>
+              {upNext.map((next) => (
+                <button key={next.id} className="nowplaying__next" onClick={() => onPlayUpNext(next)}>
+                  <div className="nowplaying__next-cover" style={{ background: next.cover }} />
+                  <div className="nowplaying__next-text">
+                    <p className="nowplaying__next-title">{next.title}</p>
+                    <p>{next.artist}</p>
+                  </div>
+                </button>
+              ))}
             </div>
           )}
         </>

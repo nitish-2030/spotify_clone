@@ -71,16 +71,16 @@
   line-height: 20px;
 }
 
-/* title na ho (jaise radio card) to subtitle ko cover se 12px neeche rakho */
+/* no title (e.g. radio card): keep the subtitle 12px below the cover */
 .card__cover + .card__subtitle {
   margin-top: 12px;
 }
 
-/* artist photo nahi hai: gradient circle + initials */
+/* no artist photo: gradient circle + initials */
 .card__cover--initials {
   display: grid;
   place-items: center;
-  container-type: inline-size; /* font cover ki width ke hisaab se */
+  container-type: inline-size; /* font size follows the cover width */
 }
 
 .card__initials {

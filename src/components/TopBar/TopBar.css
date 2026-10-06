@@ -205,9 +205,9 @@
   font-weight: 700;
 }
 
-/* ---------- responsive: sirf 2 breakpoints (real Spotify se napey) ---------- */
+/* ---------- responsive: only 2 breakpoints (measured from real Spotify) ---------- */
 
-/* 1397px aur upar: home + search bilkul screen ke beech mein */
+/* 1397px and above: home + search sit exactly in the middle of the screen */
 @media (min-width: 1397px) {
   .topbar__center {
     position: absolute;
@@ -217,7 +217,7 @@
   }
 }
 
-/* 1023px aur neeche: "Explore Premium" chhup jaata hai */
+/* 1023px and below: "Explore Premium" is hidden */
 @media (max-width: 1023px) {
   .topbar__premium {
     display: none;

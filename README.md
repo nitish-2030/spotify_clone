@@ -14,7 +14,7 @@ One UI, three content sources: **Demo**, **General** and **Spotify**.
 
 ## Features
 
-- **Three content modes**, switched from the avatar menu. The app always opens in **Demo**.
+- **Three content modes**, switched from the avatar menu. The app opens in **General** by default (falls back to Demo if it cannot load).
 - **Fallback chain:** Spotify → General → Demo. If a source fails, the next one takes over and a toast explains why.
 - **Spotify mode:** PKCE login (no backend, no client secret), top tracks, recently played, liked songs, top artists and your playlists in the sidebar library. Full songs play through the Web Playback SDK (Spotify Premium required).
 - **General mode:** real songs from the Apple iTunes Search API (30-second previews, no login, no API key).

@@ -128,6 +128,10 @@
   cursor: pointer;
 }
 
+.nowplaying__next + .nowplaying__next {
+  margin-top: 12px;
+}
+
 .nowplaying__next-cover {
   flex: none;
   width: 48px;

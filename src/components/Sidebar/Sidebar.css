@@ -5,13 +5,13 @@
   overflow-y: auto;
 }
 
-/* ---------- khuli library (280px) ---------- */
+/* ---------- expanded library (280px) ---------- */
 .sidebar__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 48px;
-  margin-bottom: 34px; /* ESTIMATE: pehle card ka top panel se ~90px neeche */
+  margin-bottom: 34px; /* ESTIMATE: first card sits ~90px below the top of the panel */
   padding: 0 8px 0 12px;
 }
 
@@ -29,7 +29,7 @@
   cursor: pointer;
 }
 
-/* sidebar par mouse aate hi "Your Library" ke saath left-arrow icon aata hai */
+/* on hover, a left-arrow icon appears next to "Your Library" */
 .sidebar__title-icon {
   display: none;
   color: var(--text-secondary);
@@ -43,7 +43,7 @@
   color: var(--text-primary);
 } */
 
-/* "+" button: khuli me 32px (ESTIMATE), rail me 35px (napa hua) */
+/* "+" button: 32px when expanded (ESTIMATE), 35px in the rail (measured) */
 .sidebar__create {
   display: grid;
   place-items: center;
@@ -97,13 +97,13 @@
   transform: scale(1.04);
 }
 
-/* ---------- band library / rail (72px) ---------- */
+/* ---------- collapsed library / rail (72px) ---------- */
 .sidebar--collapsed {
   padding: 0;
   overflow: hidden;
 }
 
-/* 72 x 107 ka block: 16 + 40 + 12 + 35 + 4 */
+/* 72 x 107 block: 16 + 40 + 12 + 35 + 4 */
 .sidebar__rail {
   display: flex;
   flex-direction: column;
@@ -133,7 +133,7 @@
   height: 35px;
 }
 
-/* "Open library" par mouse aate hi library icon ki jagah right-arrow icon */
+/* on hover, "Open library" swaps the library icon for a right-arrow icon */
 .sidebar__open-hover {
   display: none;
 }
@@ -146,9 +146,9 @@
   display: block;
 }
 
-/* ---------- Your Library: playlist rows (sirf Spotify mode) ---------- */
+/* ---------- Your Library: playlist rows (Spotify mode only) ---------- */
 .sidebar--has-library .sidebar__header {
-  margin-bottom: 8px; /* cards nahi hain, to itna gap kaafi */
+  margin-bottom: 8px; /* no cards here, so this gap is enough */
 }
 
 .library {
@@ -180,7 +180,7 @@
 }
 
 .library__text {
-  min-width: 0; /* taaki ellipsis chale */
+  min-width: 0; /* so the ellipsis works */
 }
 
 .library__title,

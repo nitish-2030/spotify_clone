@@ -22,14 +22,14 @@ export const playlists = [
   { id: "p8", title: "Feel Good Friday", description: "Upbeat tracks to kick off the weekend.", song: songs[4] },
 ];
 
-// "Suggested artists" row (gol covers)
+// "Suggested artists" row (round covers)
 export const artists = songs.map((song) => ({
   id: `a${song.id}`,
   name: song.artist,
   song,
 }));
 
-// "Popular radio" row (rang-birangi cards, 3 gol faces)
+// "Popular radio" row (colorful cards, 3 round faces)
 const radioColors = ["#ffd978", "#8fead8", "#ffa575", "#ff9fb3", "#b9a8ff", "#9ad8ff"];
 export const radios = songs.slice(0, 6).map((song, i) => ({
   id: `r${song.id}`,

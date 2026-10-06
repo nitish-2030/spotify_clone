@@ -1,4 +1,4 @@
-// Spotify Web Playback SDK (Premium chahiye). Browser khud ek "device" ban jaata hai.
+// Spotify Web Playback SDK (needs Premium). The browser becomes a Spotify "device".
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAccessToken } from "../sources/spotifyAuth";
 import { spotifyFetch } from "../sources/spotify";
@@ -10,7 +10,7 @@ function loadSdk() {
     window.onSpotifyWebPlaybackSDKReady = resolve;
     const s = document.createElement("script");
     s.src = "https://sdk.scdn.co/spotify-player.js";
-    s.onerror = () => { sdkPromise = null; reject(new Error("Spotify SDK load nahi hua")); };
+    s.onerror = () => { sdkPromise = null; reject(new Error("Could not load the Spotify SDK")); };
     document.body.appendChild(s);
   });
   return sdkPromise;
@@ -20,8 +20,8 @@ export function useSpotifyPlayer({ enabled, onError }) {
   const playerRef = useRef(null);
   const deviceRef = useRef(null);
   const trackRef = useRef(null);     // jo track hum ne start kiya
-  const endedRef = useRef(false);    // ek track ke liye "ended" sirf ek baar
-  const endHandlerRef = useRef(null); // Player yahan apna onEnded rakhta hai
+  const endedRef = useRef(false);    // fire "ended" only once per track
+  const endHandlerRef = useRef(null); // Player stores its onEnded handler here
   const onErrorRef = useRef(onError);
   useEffect(() => { onErrorRef.current = onError; });
   const [ready, setReady] = useState(false);
@@ -45,8 +45,8 @@ export function useSpotifyPlayer({ enabled, onError }) {
       player.addListener("ready", ({ device_id }) => { deviceRef.current = device_id; setReady(true); });
       player.addListener("not_ready", () => setReady(false));
       player.addListener("initialization_error", () => onErrorRef.current?.("This browser does not support the Spotify player"));
-      player.addListener("authentication_error", () => onErrorRef.current?.("Spotify Premium is required for playback"));
-      player.addListener("account_error", () => onErrorRef.current?.("Spotify Premium chahiye playback ke liye"));
+      player.addListener("authentication_error", () => onErrorRef.current?.("Your Spotify login has expired. Please connect again"));
+      player.addListener("account_error", () => onErrorRef.current?.("Spotify Premium is required for playback"));
       player.addListener("playback_error", ({ message }) => onErrorRef.current?.(`Playback error: ${message}`));
 
       player.addListener("player_state_changed", (state) => {
@@ -54,7 +54,7 @@ export function useSpotifyPlayer({ enabled, onError }) {
         clock.current = { position: state.position, duration: state.duration, at: Date.now(), paused: state.paused };
         setProgress({ position: state.position, duration: state.duration });
 
-        // SDK me "ended" event nahi hota: paused + position 0 + current track "previous" list me aa jaye
+        // The SDK has no "ended" event: paused + position 0 + current track appears in "previous" tracks
         const id = trackRef.current;
         const finished =
           id && state.paused && state.position === 0 &&
@@ -68,7 +68,7 @@ export function useSpotifyPlayer({ enabled, onError }) {
       player.connect();
     }).catch((e) => onErrorRef.current?.(e.message));
 
-    // smooth progress bar: har 500ms me clock se position nikalo
+    // smooth progress bar: derive the position from the clock every 500ms
     const tick = setInterval(() => {
       const c = clock.current;
       if (c.paused || !c.duration) return;
@@ -85,7 +85,7 @@ export function useSpotifyPlayer({ enabled, onError }) {
     };
   }, [enabled]);
 
-  // Browser autoplay rule: user click ke andar call hona chahiye
+  // Browser autoplay rule: this must be called inside a user click
   const activate = useCallback(() => playerRef.current?.activateElement?.(), []);
 
   const playUri = useCallback(async (uri) => {
@@ -103,7 +103,7 @@ export function useSpotifyPlayer({ enabled, onError }) {
         await start();
       } catch (e) {
         if (!String(e.message).includes("404")) throw e;
-        // device abhi Spotify server par register ho raha hai: transfer karke ek baar retry
+        // the device is still registering with Spotify: transfer playback and retry once
         await wait(1200);
         await spotifyFetch("/me/player", {
           method: "PUT", body: JSON.stringify({ device_ids: [deviceRef.current] }),

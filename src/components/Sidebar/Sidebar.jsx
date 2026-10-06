@@ -6,7 +6,7 @@ import "./Sidebar.css";
 function Sidebar({ expanded, onToggle, library = [] }) {
   const hasLib = library.length > 0;
 
-  // band (rail): sirf 2 icons
+  // collapsed (rail): only 2 icons
   if (!expanded) {
     return (
       <aside className="sidebar sidebar--collapsed">
@@ -28,7 +28,7 @@ function Sidebar({ expanded, onToggle, library = [] }) {
     );
   }
 
-  // khuli library
+  // expanded library
   return (
     <aside className={`sidebar ${hasLib ? "sidebar--has-library" : ""}`}>
       <div className="sidebar__header">

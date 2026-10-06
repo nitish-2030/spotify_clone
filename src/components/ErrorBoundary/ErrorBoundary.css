@@ -1,0 +1,38 @@
+.crash {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  background: #121212;
+  color: #fff;
+}
+
+.crash h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.crash p {
+  margin: 0 0 8px;
+  color: #b3b3b3;
+}
+
+.crash__btn {
+  height: 48px;
+  padding: 0 32px;
+  border: none;
+  border-radius: 500px;
+  background: #fff;
+  color: #000;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.crash__btn:hover {
+  transform: scale(1.04);
+}
