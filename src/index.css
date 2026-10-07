@@ -4,14 +4,80 @@
   box-sizing: border-box;
 }
 
+/* ---------- Theme ----------
+   Every colour that changes with the mood is a registered custom property (@property), so the
+   browser can animate it. The transition on :root fades the WHOLE app smoothly when the mood changes. */
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #1ed760; }
+@property --hero { syntax: "<color>"; inherits: true; initial-value: #1b3336; }
+@property --hero2 { syntax: "<color>"; inherits: true; initial-value: rgba(27, 51, 54, 0); }
+@property --bg-base { syntax: "<color>"; inherits: true; initial-value: #000; }
+@property --bg-panel { syntax: "<color>"; inherits: true; initial-value: #121212; }
+@property --bg-elevated { syntax: "<color>"; inherits: true; initial-value: #1f1f1f; }
+@property --bg-hover { syntax: "<color>"; inherits: true; initial-value: #2a2a2a; }
+
 :root {
+  --accent: #1ed760;
+  --hero: #1b3336;
+  --hero2: rgba(27, 51, 54, 0);
   --bg-base: #000;
+  --bg-panel: #121212;
   --bg-elevated: #1f1f1f;
   --bg-hover: #2a2a2a;
   --text-primary: #fff;
   --text-secondary: #b3b3b3;
   --topbar-height: 64px;
-  --bg-panel: #121212;
+
+  transition:
+    --accent 1.1s ease, --hero 1.1s ease, --hero2 1.1s ease, --bg-base 1.1s ease,
+    --bg-panel 1.1s ease, --bg-elevated 1.1s ease, --bg-hover 1.1s ease;
+}
+
+/* Romantic: pink */
+:root[data-mood="romantic"] {
+  --accent: #ff6fa8;
+  --hero: #5c1736;
+  --hero2: rgba(255, 111, 168, 0.3);
+  --bg-base: #0e0509;
+  --bg-panel: #1a0b13;
+  --bg-elevated: #2b1220;
+  --bg-hover: #3b192b;
+}
+
+/* Devotional: saffron */
+:root[data-mood="devotional"] {
+  --accent: #ff9d2e;
+  --hero: #6a3608;
+  --hero2: rgba(255, 153, 51, 0.32);
+  --bg-base: #0e0803;
+  --bg-panel: #1a1008;
+  --bg-elevated: #2c1b0d;
+  --bg-hover: #3d2712;
+}
+
+/* Phonk / BGM: violet + red + hot pink */
+:root[data-mood="phonk"] {
+  --accent: #ff2d7a;
+  --hero: #3d0f5c;
+  --hero2: rgba(235, 30, 70, 0.45);
+  --bg-base: #09030f;
+  --bg-panel: #130a1c;
+  --bg-elevated: #22112f;
+  --bg-hover: #321843;
+}
+
+/* Sad: deep midnight blue */
+:root[data-mood="sad"] {
+  --accent: #7ab0ff;
+  --hero: #132a52;
+  --hero2: rgba(90, 120, 200, 0.24);
+  --bg-base: #04070d;
+  --bg-panel: #0b111b;
+  --bg-elevated: #141d2c;
+  --bg-hover: #1e2a3f;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { transition-duration: 0.01s; }
 }
 
 body {

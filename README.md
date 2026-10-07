@@ -14,6 +14,7 @@ One UI, three content sources: **Demo**, **General** and **Spotify**.
 
 ## Features
 
+- **Mood themes:** the song you play themes the whole app, with a smooth colour fade and floating particles. Romantic = pink, Devotional = saffron, Phonk/BGM = violet-red-pink, Sad = midnight blue. The mood comes from the row a song is in, its genre, or keywords in its title (`src/utils/mood.js`). Mood chips next to All/Music/Podcasts list every song of a mood.
 - **Three content modes**, switched from the avatar menu. The app opens in **General** by default (falls back to Demo if it cannot load).
 - **Fallback chain:** Spotify → General → Demo. If a source fails, the next one takes over and a toast explains why.
 - **Spotify mode:** PKCE login (no backend, no client secret), top tracks, recently played, liked songs, top artists and your playlists in the sidebar library. Full songs play through the Web Playback SDK (Spotify Premium required).

@@ -1,0 +1,90 @@
+/* Mood particles live above the page but never catch clicks */
+.ambience {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
+  animation: ambience-in 1.2s ease both;
+}
+
+.ambience__p {
+  position: absolute;
+  left: var(--x);
+  bottom: -40px;
+  color: var(--accent);
+  font-size: var(--s);
+  line-height: 1;
+  opacity: 0;
+  animation: ambience-rise var(--t) linear var(--d) infinite;
+}
+
+/* Sad: thin rain falling from the top */
+.ambience--sad .ambience__p {
+  top: -40px;
+  bottom: auto;
+  width: 2px;
+  height: 22px;
+  background: linear-gradient(transparent, var(--accent));
+  animation-name: ambience-fall;
+  animation-duration: calc(var(--t) / 4);
+}
+
+/* Phonk: faster, with a neon glow */
+.ambience--phonk .ambience__p {
+  animation-duration: calc(var(--t) * 0.6);
+  text-shadow: 0 0 10px var(--accent);
+}
+
+.ambience--romantic .ambience__p,
+.ambience--devotional .ambience__p {
+  text-shadow: 0 0 12px var(--accent);
+}
+
+@keyframes ambience-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ambience-rise {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.45; }
+  100% { transform: translateY(-115vh) rotate(40deg); opacity: 0; }
+}
+
+@keyframes ambience-fall {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.4; }
+  100% { transform: translateY(115vh); opacity: 0; }
+}
+
+/* Small pill that announces the mood when the theme changes */
+.mood-label {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  z-index: 30;
+  padding: 8px 16px;
+  border-radius: 500px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 0 24px var(--hero2), 0 0 0 1px var(--accent);
+  pointer-events: none;
+  animation: mood-label 2.8s ease both;
+}
+
+.mood-label__glyph {
+  color: var(--accent);
+}
+
+@keyframes mood-label {
+  0% { opacity: 0; transform: translate(-50%, 12px); }
+  12%, 80% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambience { display: none; }
+}

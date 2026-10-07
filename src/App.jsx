@@ -4,11 +4,13 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import MainContent from "./components/MainContent/MainContent";
 import Player from "./components/Player/Player";
 import NowPlaying from "./components/NowPlaying/NowPlaying";
+import Ambience from "./components/Ambience/Ambience";
 import Toast from "./components/Toast/Toast";
 import { useSpotifyPlayer } from "./hooks/useSpotifyPlayer";
 import { useSearch } from "./hooks/useSearch";
 import { usePersistentState } from "./hooks/usePersistentState";
 import { pickNext, upNext } from "./utils/queue";
+import { moodOf } from "./utils/mood";
 import { loadContent, MODES } from "./sources";
 import { hasSpotifyConfig, isConnected, startLogin, logout, handleAuthCallback } from "./sources/spotifyAuth";
 import "./App.css";
@@ -63,6 +65,13 @@ function App() {
   const loading = !content || content.key !== `${mode}-${reloadKey}`;
   const songs = useMemo(() => content?.songs ?? [], [content]);
   const activeQueue = queue.length ? queue : songs;
+
+  // The mood of the playing song themes the whole app (colours fade smoothly, see index.css)
+  const mood = moodOf(currentSong);
+  useEffect(() => {
+    if (mood) document.documentElement.dataset.mood = mood;
+    else delete document.documentElement.dataset.mood;
+  }, [mood]);
   const search = useSearch({ source: content?.source, songs, query });
 
   const switchMode = useCallback((next) => {
@@ -233,6 +242,7 @@ function App() {
         onToggleQueue={() => setNpOpen(!npOpen)}
       />
       <Toast message={toast} />
+      <Ambience mood={mood} />
     </div>
   );
 }

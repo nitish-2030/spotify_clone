@@ -27,6 +27,7 @@ function mapTrack(t) {
     src: t.previewUrl,
     link: t.trackViewUrl,
     cover: imageCover(t.artworkUrl100.replace("100x100", "400x400")),
+    genre: t.primaryGenreName,
   };
 }
 
@@ -74,6 +75,11 @@ const ROWS = [
   { id: "rec", title: "Recommended for today", caption: "Inspired by your recent activity", term: "arijit singh", tall: true },
   { id: "retro", title: "Retro Bollywood", caption: "Inspired by your recent activity", term: "kishore kumar", tall: true },
   { id: "pop", title: "Popular albums and singles", term: "bollywood hits 2025", tall: true },
+  // Mood rows: every song in them gets that mood, so clicking one themes the whole app
+  { id: "m-romantic", title: "Romantic hits", caption: "Pink mood", term: "romantic hindi songs", tall: true, mood: "romantic" },
+  { id: "m-devotional", title: "Bhajan & devotional", caption: "Saffron mood", term: "bhajan", tall: true, mood: "devotional" },
+  { id: "m-phonk", title: "Phonk & BGM", caption: "Violet-red mood", term: "phonk", tall: true, mood: "phonk" },
+  { id: "m-sad", title: "Sad songs", caption: "Midnight mood", term: "sad hindi songs", tall: true, mood: "sad" },
 ];
 const ROW_LIMIT = 40; // ask iTunes for plenty, because duplicates are removed afterwards
 const ROW_MAX = 20; // cards per row after removing duplicates
@@ -88,7 +94,11 @@ export async function loadGeneral() {
     ...EXTRA.map((t) => search(t)),
   ];
   const settled = await Promise.allSettled(jobs);
-  const lists = settled.map((s) => (s.status === "fulfilled" ? s.value : []));
+  const lists = settled.map((s, i) => {
+    const list = s.status === "fulfilled" ? s.value : [];
+    const mood = ROWS[i]?.mood; // EXTRA searches come after ROWS and have no mood
+    return mood ? list.map((song) => ({ ...song, mood })) : list;
+  });
   const songs = uniqueSongs(lists.flat());
   if (songs.length === 0) throw new Error("No songs were returned by the General source");
 

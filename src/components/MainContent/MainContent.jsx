@@ -2,9 +2,12 @@ import { useState } from "react";
 import { FaSpotify, FaInstagram, FaTwitter, FaFacebook } from "react-icons/fa";
 import Card from "../Card/Card";
 import { uniqueSongs } from "../../sources/cards";
+import { MOODS, moodInfo, moodOf } from "../../utils/mood";
 import "./MainContent.css";
 
-const chips = ["All", "Music", "Podcasts"];
+// "All / Music / Podcasts" + one chip per mood (a mood chip shows every song of that mood)
+const chips = ["All", "Music", "Podcasts", ...MOODS.map((m) => m.id)];
+const chipLabel = (chip) => moodInfo(chip)?.label ?? chip;
 
 // Grey placeholder cards shown while the content is loading
 function Skeleton() {
@@ -176,6 +179,16 @@ function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, 
       ) : (
         <p className="main__empty">No results found for "{q}"</p>
       );
+  } else if (moodInfo(activeChip)) {
+    const moodSongs = songs.filter((s) => moodOf(s) === activeChip);
+    body =
+      moodSongs.length > 0 ? (
+        <Section title={`${chipLabel(activeChip)} songs`} caption="Opens in its own colour theme" wrap>
+          {moodSongs.map((s) => renderCard(songItem(s), moodSongs, `mood-${activeChip}`, [`mood-${activeChip}`]))}
+        </Section>
+      ) : (
+        <p className="main__empty">No {chipLabel(activeChip).toLowerCase()} songs in this list yet</p>
+      );
   } else if (activeChip === "Podcasts") {
     body = <p className="main__empty">No podcasts to show yet</p>;
   } else if (view === "browse") {
@@ -205,7 +218,7 @@ function MainContent({ content, loading, currentSong, isPlaying, onPlay, query, 
             className={`main__chip ${activeChip === chip ? "main__chip--active" : ""}`}
             onClick={() => setActiveChip(chip)}
           >
-            {chip}
+            {chipLabel(chip)}
           </button>
         ))}
       </div>

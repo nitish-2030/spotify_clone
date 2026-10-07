@@ -21,7 +21,7 @@ const withTimeout = (promise, ms) =>
 // ---- tiny sessionStorage cache (General only: Spotify data is personal) ----
 function readCache(key) {
   try {
-    const hit = JSON.parse(sessionStorage.getItem(`content:v2:${key}`));
+    const hit = JSON.parse(sessionStorage.getItem(`content:v3:${key}`));
     return hit && Date.now() - hit.at < CACHE_TTL_MS ? hit.data : null;
   } catch {
     return null;
@@ -30,7 +30,7 @@ function readCache(key) {
 
 function writeCache(key, data) {
   try {
-    sessionStorage.setItem(`content:v2:${key}`, JSON.stringify({ at: Date.now(), data }));
+    sessionStorage.setItem(`content:v3:${key}`, JSON.stringify({ at: Date.now(), data }));
   } catch {
     /* storage full or unavailable: just skip caching */
   }

@@ -106,7 +106,7 @@
 
 .player__btn--on,
 .player__btn--on:hover:not(:disabled) {
-  color: #1ed760;
+  color: var(--accent);
 }
 
 /* small green dot below shuffle / repeat when ON (like real Spotify) */
@@ -118,7 +118,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #1ed760;
+  background: var(--accent);
   transform: translateX(-50%);
 }
 
@@ -208,7 +208,7 @@
 .player__range:hover:not(:disabled) {
   background: linear-gradient(
     to right,
-    #1ed760 var(--progress, 0%),
+    var(--accent) var(--progress, 0%),
     #4d4d4d var(--progress, 0%)
   );
 }

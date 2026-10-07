@@ -2,8 +2,11 @@
 import { songs as rawSongs, playlists } from "../data/songs";
 import { songCard, discoveryRows } from "./cards";
 
+// Demo songs have no real genre, so their mood is set by hand
+const DEMO_MOODS = { 1: "phonk", 2: "sad", 3: "romantic", 4: "devotional", 5: "romantic", 6: "sad", 8: "phonk" };
+
 export async function loadDemo() {
-  const songs = rawSongs.map((s) => ({ ...s, demo: true }));
+  const songs = rawSongs.map((s) => ({ ...s, demo: true, mood: DEMO_MOODS[s.id] }));
   const byId = new Map(songs.map((s) => [s.id, s]));
 
   return {
