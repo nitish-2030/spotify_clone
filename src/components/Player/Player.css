@@ -315,3 +315,12 @@
     display: none;
   }
 }
+
+.player__icon-btn--on {
+  color: var(--accent);
+}
+
+.player__icon-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

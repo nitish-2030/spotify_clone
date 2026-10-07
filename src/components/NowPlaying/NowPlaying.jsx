@@ -1,7 +1,26 @@
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import Lyrics from "../Lyrics/Lyrics";
+import { MOODS } from "../../utils/mood";
 import "./NowPlaying.css";
 
-function NowPlaying({ open, onToggle, song, upNext = [], onPlayUpNext }) {
+// Theme picker: "auto" lets the app decide, a mood (or "none") is remembered for this song
+const CHOICES = [
+  { id: "auto", label: "Auto", title: "Pick the theme automatically" },
+  { id: "none", label: "●", title: "Default green theme" },
+  ...MOODS.map((m) => ({ id: m.id, label: m.glyph, title: `${m.label} theme` })),
+];
+
+function NowPlaying({
+  open,
+  onToggle,
+  song,
+  view = "now",
+  lyrics,
+  upNext = [],
+  onPlayUpNext,
+  moodChoice = "auto",
+  onMoodChoice,
+}) {
   if (!open) {
     return (
       <aside className="nowplaying nowplaying--closed">
@@ -16,8 +35,10 @@ function NowPlaying({ open, onToggle, song, upNext = [], onPlayUpNext }) {
     );
   }
 
+  const showLyrics = view === "lyrics" && song;
+
   return (
-    <aside className="nowplaying">
+    <aside className={`nowplaying ${showLyrics ? "nowplaying--lyrics" : ""}`}>
       <div className="nowplaying__header">
         <button
           className="nowplaying__toggle"
@@ -26,14 +47,37 @@ function NowPlaying({ open, onToggle, song, upNext = [], onPlayUpNext }) {
         >
           <FiChevronRight size={20} />
         </button>
-        <h2>Now playing</h2>
+        <h2>{showLyrics ? "Lyrics" : "Now playing"}</h2>
       </div>
 
-      {song ? (
+      {showLyrics ? (
+        <>
+          <p className="nowplaying__lyrics-song">
+            <strong>{song.title}</strong> &middot; {song.artist}
+          </p>
+          <Lyrics song={song} lyrics={lyrics} />
+        </>
+      ) : song ? (
         <>
           <div className="nowplaying__cover" style={{ background: song.cover }} />
           <h3 className="nowplaying__title">{song.title}</h3>
           <p className="nowplaying__artist">{song.artist}</p>
+
+          <div className="nowplaying__theme" role="group" aria-label="Colour theme for this song">
+            <span>Theme</span>
+            {CHOICES.map((c) => (
+              <button
+                key={c.id}
+                className={`nowplaying__theme-btn ${moodChoice === c.id ? "nowplaying__theme-btn--on" : ""}`}
+                title={c.title}
+                aria-label={c.title}
+                aria-pressed={moodChoice === c.id}
+                onClick={() => onMoodChoice?.(c.id)}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
 
           <div className="nowplaying__card">
             <h4>About the artist</h4>

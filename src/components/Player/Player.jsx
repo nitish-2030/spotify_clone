@@ -18,6 +18,7 @@ import {
 } from "react-icons/md";
 import { HiOutlineQueueList } from "react-icons/hi2";
 import { usePersistentState } from "../../hooks/usePersistentState";
+import { registerAudio, setPlaybackTime } from "../../utils/playback";
 import "./Player.css";
 
 function formatTime(seconds) {
@@ -27,15 +28,20 @@ function formatTime(seconds) {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-function toggleFullscreen() {
-  if (document.fullscreenElement) {
-    document.exitFullscreen();
-  } else {
-    document.documentElement.requestFullscreen();
-  }
-}
-
-function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onToggleShuffle, spotify, onToggleQueue }) {
+function Player({
+  song,
+  isPlaying,
+  onTogglePlay,
+  onNext,
+  onPrev,
+  shuffle,
+  onToggleShuffle,
+  spotify,
+  onToggleQueue,
+  onToggleLyrics,
+  lyricsOpen,
+  onOpenVisualizer,
+}) {
   const audioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -109,6 +115,15 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
   const shownTime = sdk ? spotify.progress.position / 1000 : currentTime;
   const shownDuration = sdk ? spotify.progress.duration / 1000 : duration;
   const progress = shownDuration ? (shownTime / shownDuration) * 100 : 0;
+
+  // Share the song position with the lyrics view and the visualizer, and the <audio> with the visualizer
+  useEffect(() => {
+    setPlaybackTime(shownTime);
+  }, [shownTime]);
+  useEffect(() => {
+    registerAudio(audioRef.current);
+    return () => registerAudio(null);
+  }, []);
 
   return (
     <footer className="player">
@@ -192,7 +207,12 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
       </div>
 
       <div className="player__right">
-        <button className="player__icon-btn player__extra" aria-label="Lyrics">
+        <button
+          className={`player__icon-btn player__extra ${lyricsOpen ? "player__icon-btn--on" : ""}`}
+          aria-label="Lyrics"
+          aria-pressed={Boolean(lyricsOpen)}
+          onClick={onToggleLyrics}
+        >
           <TbMicrophone2 size={16}/>
         </button>
         <button className="player__icon-btn player__extra" aria-label="Queue" onClick={onToggleQueue}>
@@ -224,7 +244,7 @@ function Player({ song, isPlaying, onTogglePlay, onNext, onPrev, shuffle, onTogg
         <button className="player__icon-btn player__extra" aria-label="Mini player">
           <MdOutlinePictureInPictureAlt size={20} />
         </button>
-        <button className="player__icon-btn" aria-label="Full screen" onClick={toggleFullscreen}>
+        <button className="player__icon-btn" aria-label="Full screen" onClick={onOpenVisualizer} disabled={!song}>
           <FiMaximize size={18} />
         </button>
       </div>

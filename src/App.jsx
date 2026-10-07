@@ -5,12 +5,14 @@ import MainContent from "./components/MainContent/MainContent";
 import Player from "./components/Player/Player";
 import NowPlaying from "./components/NowPlaying/NowPlaying";
 import Ambience from "./components/Ambience/Ambience";
+import Visualizer from "./components/Visualizer/Visualizer";
 import Toast from "./components/Toast/Toast";
 import { useSpotifyPlayer } from "./hooks/useSpotifyPlayer";
 import { useSearch } from "./hooks/useSearch";
+import { useLyrics } from "./hooks/useLyrics";
 import { usePersistentState } from "./hooks/usePersistentState";
 import { pickNext, upNext } from "./utils/queue";
-import { moodOf } from "./utils/mood";
+import { moodFromText, moodOf } from "./utils/mood";
 import { loadContent, MODES } from "./sources";
 import { hasSpotifyConfig, isConnected, startLogin, logout, handleAuthCallback } from "./sources/spotifyAuth";
 import "./App.css";
@@ -44,6 +46,9 @@ function App() {
   const [shuffle, setShuffle] = usePersistentState("pref:shuffle", false);
   const [queue, setQueue] = useState([]); // songs of the row/list the current song was played from
   const [npOpen, setNpOpen] = useState(false);
+  const [npView, setNpView] = useState("now"); // right panel: "now" (now playing) | "lyrics"
+  const [vizOpen, setVizOpen] = useState(false); // full screen visualizer
+  const [moodOverrides, setMoodOverrides] = usePersistentState("pref:moodOverrides", {}); // song id -> mood | "none"
   const [view, setView] = useState("home"); // "home" | "browse"
 
   // Library: the default comes from the screen width, clicking toggles it
@@ -66,8 +71,22 @@ function App() {
   const songs = useMemo(() => content?.songs ?? [], [content]);
   const activeQueue = queue.length ? queue : songs;
 
-  // The mood of the playing song themes the whole app (colours fade smoothly, see index.css)
-  const mood = moodOf(currentSong);
+  // The mood of the playing song themes the whole app (colours fade smoothly, see index.css).
+  // Order: the user's own pick > row / title / genre > words in the lyrics > no mood (green).
+  const lyrics = useLyrics(currentSong);
+  const lyricsMood = useMemo(() => moodFromText(lyrics.plain), [lyrics.plain]);
+  const moodChoice = (currentSong && moodOverrides[currentSong.id]) || "auto";
+  const autoMood = moodOf(currentSong) ?? lyricsMood;
+  const mood = !currentSong ? null : moodChoice === "auto" ? autoMood : moodChoice === "none" ? null : moodChoice;
+
+  function handleMoodChoice(choice) {
+    setMoodOverrides((prev) => {
+      const next = { ...prev };
+      if (choice === "auto") delete next[currentSong.id];
+      else next[currentSong.id] = choice;
+      return next;
+    });
+  }
   useEffect(() => {
     if (mood) document.documentElement.dataset.mood = mood;
     else delete document.documentElement.dataset.mood;
@@ -78,6 +97,7 @@ function App() {
     localStorage.setItem(MODE_KEY, next);
     setMode(next);
     setCurrentSong(null); // stop the song from the previous source
+    setVizOpen(false);
     setQueue([]);
     setIsPlaying(false);
   }, []);
@@ -148,6 +168,7 @@ function App() {
     } else {
       setCurrentSong(song);
       setIsPlaying(true);
+      setNpOpen(true); // a song picked from a card opens the Now Playing panel
     }
     if (list?.length) setQueue(list);
   }
@@ -224,6 +245,10 @@ function App() {
         open={npOpen}
         onToggle={() => setNpOpen(!npOpen)}
         song={currentSong}
+        view={npView}
+        lyrics={lyrics}
+        moodChoice={moodChoice}
+        onMoodChoice={handleMoodChoice}
         upNext={upcoming}
         onPlayUpNext={(s) => {
           setCurrentSong(s);
@@ -239,10 +264,38 @@ function App() {
         shuffle={shuffle}
         onToggleShuffle={() => setShuffle(!shuffle)}
         spotify={spotify}
-        onToggleQueue={() => setNpOpen(!npOpen)}
+        onToggleQueue={() => {
+          // Queue button: show the Now Playing view (with the queue); press again to close it
+          if (npOpen && npView === "now") setNpOpen(false);
+          else {
+            setNpView("now");
+            setNpOpen(true);
+          }
+        }}
+        onToggleLyrics={() => {
+          if (npOpen && npView === "lyrics") setNpView("now");
+          else {
+            setNpView("lyrics");
+            setNpOpen(true);
+          }
+        }}
+        lyricsOpen={npOpen && npView === "lyrics"}
+        onOpenVisualizer={() => setVizOpen(true)}
       />
       <Toast message={toast} />
       <Ambience mood={mood} />
+      {vizOpen && currentSong && (
+        <Visualizer
+          song={currentSong}
+          isPlaying={isPlaying}
+          mood={mood}
+          lyrics={lyrics}
+          onClose={() => setVizOpen(false)}
+          onTogglePlay={() => setIsPlaying(!isPlaying)}
+          onNext={() => playByOffset(1)}
+          onPrev={() => playByOffset(-1)}
+        />
+      )}
     </div>
   );
 }

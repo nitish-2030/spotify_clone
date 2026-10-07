@@ -153,3 +153,56 @@
   color: var(--text-primary) !important;
   font-weight: 700;
 }
+/* Lyrics view: the panel does not scroll, the lyrics inside it do */
+.nowplaying--lyrics {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nowplaying__lyrics-song {
+  margin: 12px 0 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.nowplaying__lyrics-song strong {
+  color: var(--text-primary);
+}
+
+/* Theme picker under the song title */
+.nowplaying__theme {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 16px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.nowplaying__theme span {
+  margin-right: 4px;
+}
+
+.nowplaying__theme-btn {
+  min-width: 30px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 500px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.nowplaying__theme-btn:hover {
+  background: var(--bg-hover);
+}
+
+.nowplaying__theme-btn--on {
+  border-color: var(--accent);
+  color: var(--accent);
+}

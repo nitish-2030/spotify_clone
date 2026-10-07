@@ -46,3 +46,23 @@ export function moodOf(song) {
   if (!song) return null;
   return MOOD_IDS.includes(song.mood) ? song.mood : detectMood(song);
 }
+
+// ---- Mood from lyrics -------------------------------------------------------
+// Used when the title alone says nothing. Stricter word lists than the title ones (lyrics are long,
+// so common words would otherwise vote for the wrong mood).
+const LYRIC_WORDS = {
+  romantic: /\b(love|pyaar|pyar|ishq|ishqa|mohabbat|muhabbat|sanam|saajna|saajan|dil|jaan|baahon|bahon|kiss|heart|darling|mehbooba|dilbar)\b/gi,
+  sad: /\b(dard|judaai|judai|bewafa|bewafai|tanha|tanhaai|aansu|ansu|alvida|tears|cry|crying|broken|lonely|rona|royi|zakhm|tadap|bichhad|bichhda)\b/gi,
+  devotional: /\b(ram|krishna|shiv|shankar|hanuman|bhagwan|prabhu|ishwar|bhakti|aarti|jai|namah|om|maiya|mata|ganesh|durga|mahadev|hari|sai)\b/gi,
+};
+
+/** Guess the mood from lyrics text: the most frequent mood wins if it clearly beats the others. */
+export function moodFromText(text, min = 4) {
+  if (!text) return null;
+  const counts = Object.entries(LYRIC_WORDS)
+    .map(([id, re]) => [id, (text.match(re) ?? []).length])
+    .sort((a, b) => b[1] - a[1]);
+  const [best, second] = counts;
+  if (best[1] < min || best[1] < second[1] * 1.5) return null;
+  return best[0];
+}
